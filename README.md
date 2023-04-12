@@ -1,5 +1,5 @@
 # SWAT
-Simple Workspace Offensive Tool (SWAT) is a Python tool for simulating malicious behavior against Google Workspace in reference to the MITRE ATT&CK framework.
+Simple Workspace ATT&CK Tool (SWAT) is a Python tool for simulating malicious behavior against Google Workspace in reference to the MITRE ATT&CK framework.
 
 # Setup Tool
 To get started, do the following steps:
