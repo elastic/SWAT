@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="swot",
+    name="swat",
     version="0.1",
     packages=find_packages(),
     install_requires=[
@@ -12,7 +12,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "swot = swot.main:main",
+            "swat = swat.main:main",
         ],
     },
 )

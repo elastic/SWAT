@@ -3,7 +3,7 @@ import cmd
 from .google_auth import authenticate
 from .commands.base_command import BaseCommand
 
-class SWOTShell(cmd.Cmd):
+class SWATShell(cmd.Cmd):
     intro = """
 ░██████╗██╗███╗░░░███╗██████╗░██╗░░░░░███████╗
 ██╔════╝██║████╗░████║██╔══██╗██║░░░░░██╔════╝
@@ -25,7 +25,7 @@ class SWOTShell(cmd.Cmd):
 ██╔══██║░░░██║░░░░░░██║░░░██║░░██╗██╔═██╗░  ░░░██║░░░██║░░██║██║░░██║██║░░░░░
 ██║░░██║░░░██║░░░░░░██║░░░╚█████╔╝██║░╚██╗  ░░░██║░░░╚█████╔╝╚█████╔╝███████╗
 ╚═╝░░╚═╝░░░╚═╝░░░░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝  ░░░╚═╝░░░░╚════╝░░╚════╝░╚══════╝\n"""
-    prompt = "SWOT> "
+    prompt = "SWAT> "
 
     def default(self, line):
         args = line.split()
@@ -34,7 +34,7 @@ class SWOTShell(cmd.Cmd):
         # Dynamically import the command module
         try:
             command_module = __import__(
-                f"swot.commands.{command_name}",
+                f"swat.commands.{command_name}",
                 fromlist=["Command"],
             )
             command_class = getattr(command_module, "Command")
@@ -72,7 +72,7 @@ class SWOTShell(cmd.Cmd):
     do_quit = do_exit
 
 def main():
-    parser = argparse.ArgumentParser(description="SWOT CLI")
+    parser = argparse.ArgumentParser(description="SWAT CLI")
     parser.add_argument("--credentials", help="Path to the credentials file", required=True)
     parser.add_argument("--token", help="Path to the token file", required=True)
     args = parser.parse_args()
@@ -82,4 +82,4 @@ def main():
     creds = authenticate(scopes, args.credentials, args.token)
 
     # Start the interactive shell
-    SWOTShell().cmdloop()
+    SWATShell().cmdloop()
