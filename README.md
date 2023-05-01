@@ -6,7 +6,7 @@
   <h1>SWAT - Simple Workspace ATT&CK Tool</h1>
 
   <p>
-    SWAT is a simple red teaming tool designed specifically for red teaming exercises against Google Workspace environments. 
+    SWAT is a simple red teaming tool designed specifically for red teaming exercises against Google Workspace environments.
   </p>
 
 <!-- Badges -->
@@ -30,7 +30,7 @@ SWAT maps closely to the MITRE ATT&CK framework, providing an interactive comman
 
 ## Table of Contents
 
-- [SWAT - Simple Workspace ATT\&CK Tool](#swat---simple-workspace-attck-tool)
+- [](#)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Prerequisites](#prerequisites)
