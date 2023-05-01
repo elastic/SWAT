@@ -1,0 +1,5 @@
+*.egg-info
+*__pycache__*
+*.pickle
+*vscode
+*launch.json

@@ -8,7 +8,7 @@ SWAT's Tango payload was developed in GoLang, making it compatible across platfo
    1. Drive API
    2. Sheets API
    3. Docs API
-   4. GMail API
+   4. Gmail API
    5. Apps Script API
 
 #### Build the Executable from Go
