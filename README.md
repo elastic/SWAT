@@ -1,40 +1,39 @@
 # SWAT - Simple Workspace ATT&CK Tool
-[![GitHub License](https://img.shields.io/github/license/{USERNAME}/{REPO_NAME})](LICENSE)
-[![GitHub Issues](https://img.shields.io/github/issues/{USERNAME}/{REPO_NAME})](https://github.com/{USERNAME}/{REPO_NAME}/issues)
-[![GitHub Stars](https://img.shields.io/github/stars/{USERNAME}/{REPO_NAME})](https://github.com/{USERNAME}/{REPO_NAME}/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/{USERNAME}/{REPO_NAME})](https://github.com/{USERNAME}/{REPO_NAME}/network)
+[![Supported Python Versions](https://img.shields.io/badge/python-3.10+-red.svg?style=for-the-badge&logo=python)](https://www.python.org/downloads/)
+[![Supported Go Versions](https://img.shields.io/badge/golang-20.03+-red.svg?style=for-the-badge&logo=go)](https://go.dev/dl/)
+[![ATT&CK Coverage](https://img.shields.io/badge/ATT&CK-Navigator-red.svg?style=for-the-badge)](https://ela.st/detection-rules-navigator)
 
 SWAT is a simple red teaming tool designed specifically for red teaming exercises against Google Workspace environments. The tool maps closely to the MITRE ATT&CK framework, providing an interactive command-line interface and shell to simulate cyber attacks and evaluate the effectiveness of an organization's security controls. Built with Python, YAML, and GoLang, this tool helps penetration testers, security professionals, and ethical hackers simulate the malicious behavior of adversaries against Google Workspace environments.
 
 ## Table of Contents
 
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [License](#license)
-- [Disclaimer](#disclaimer)
+- [SWAT - Simple Workspace ATT\&CK Tool](#swat---simple-workspace-attck-tool)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+    - [Setup Google Workspace Environment](#setup-google-workspace-environment)
+    - [Setup Credentials](#setup-credentials)
+    - [Initiate Shell](#initiate-shell)
 
 ## Features
 
 - Interactive command-line interface and shell
+- Commands to carry out red teaming techniques
 - Maps closely to the MITRE ATT&CK framework
-- Customizable attack scenarios and payloads
-- Comprehensive reporting and analytics
-- Supports Python, YAML, and GoLang
+- Includes a cross-platform C2 payload
+- Gmail phishing kit
+- Generated Jupyter Notebooks for data analysis
+- Supports Python, YAML, and Golang
 
 ## Prerequisites
+SWAT requires simple Google Workspace and GCP environments to be setup prior to use. This includes a domain registered to Google Workspace with at least a [Business Starter](https://workspace.google.com/pricing.html) license. This gives access to the [Google Workspace admin console](https://admin.google.com) by the administrator account. This administrator account can then be used to login to the [GCP console](https://console.cloud.google.com/) where Google Workspace APIs are managed.
 
-- Google Workspace administrator account with API access
-- Python 3.6+
-- GoLang 1.14+
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/{USERNAME}/{REPO_NAME}.git`
-2. Change to the repository directory: `cd {REPO_NAME}`
+1. Clone the repository: `git clone git@github.com:elastic/SWAT.git`
+2. Change to the repository directory: `cd SWAT`
 3. Install the required dependencies: `pip install -e .`
 
 ### Setup Google Workspace Environment
@@ -54,48 +53,12 @@ This tool requires a Google Workspace environment with access to GCP for credent
 ### Initiate Shell
 Run the following to start the SWAT shell.
 
-```
+```console
 swat --credentials path/to/credentials.json --token path/to/token.pickle
 ```
-<img src="/swat/assets/swat_shell.png"  width="500" height="300">
 
-### Tango Payload
-SWAT's Tango payload was developed in GoLang, making it compatible across platforms. Tango is a malicious command-and-control (C2) payload that can be built and distributed to any Windows, Linux or macOS endpoint of choosing. A GCP service account, credentials and specific Google Workspace APIs must be enabled for the payload to operate successfully.
 
-#### Setup Credentials and Enable APIs
-1. Setup a service account for Tango in GCP
-2. Create credentials for the Tango service account
-3. Enable the following Google Workspace APIs for the Tango service account:
-   1. Drive API
-   2. Sheets API
-   3. Docs API
-   4. GMail API
-   5. Apps Script API
 
-#### Build the Executable from Go
-
-```
-cd swat/tango
-go build
-```
-
-#### Execute Tango Executable
-The executable can be executed on the endpoint after distribution. Credentials can be passed into the execution command or can be hardcoded into the binary itself.
-
-Windows
-```
-TBD
-```
-
-Linux
-```
-TBD
-```
-
-macOS
-```
-TBD
-```
 
 
 
