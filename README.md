@@ -1,9 +1,32 @@
-# SWAT - Simple Workspace ATT&CK Tool
-[![Supported Python Versions](https://img.shields.io/badge/python-3.10+-red.svg?style=for-the-badge&logo=python)](https://www.python.org/downloads/)
-[![Supported Go Versions](https://img.shields.io/badge/golang-20.03+-red.svg?style=for-the-badge&logo=go)](https://go.dev/dl/)
-[![ATT&CK Coverage](https://img.shields.io/badge/ATT&CK-Navigator-red.svg?style=for-the-badge)](https://ela.st/detection-rules-navigator)
+#
 
-SWAT is a simple red teaming tool designed specifically for red teaming exercises against Google Workspace environments. The tool maps closely to the MITRE ATT&CK framework, providing an interactive command-line interface and shell to simulate cyber attacks and evaluate the effectiveness of an organization's security controls. Built with Python, YAML, and GoLang, this tool helps penetration testers, security professionals, and ethical hackers simulate the malicious behavior of adversaries against Google Workspace environments.
+<div align="center">
+
+  <img src="assets/logo.png" alt="logo" width="400" height="auto" />
+  <h1>SWAT - Simple Workspace ATT&CK Tool</h1>
+
+  <p>
+    SWAT is a simple red teaming tool designed specifically for red teaming exercises against Google Workspace environments. 
+  </p>
+
+<!-- Badges -->
+
+[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/downloads/)
+[![Go](https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white)](https://go.dev/dl/)
+[![Jupyter Notebook](https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white)](https://jupyter.org/install)
+[![ATT&CK Coverage](https://img.shields.io/badge/ATT&CK-Navigator-red.svg?style=for-the-badge&logoColor=white)](https://attack.mitre.org/matrices/enterprise/cloud/googleworkspace/)
+
+
+<h5>
+    <a href="https://github.com/elastic/SWAT/issues/">Report Bug</a>
+  <span> · </span>
+    <a href="https://github.com/elastic/SWAT/issues/">Request Feature</a>
+  </h5>
+</div>
+
+<br />
+
+SWAT maps closely to the MITRE ATT&CK framework, providing an interactive command-line interface and shell to simulate cyber attacks and evaluate the effectiveness of an organization's security controls. Built with Python, YAML, and GoLang, this tool helps penetration testers, security professionals, and ethical hackers simulate the malicious behavior of adversaries against Google Workspace environments.
 
 ## Table of Contents
 
