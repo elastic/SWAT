@@ -1,8 +1,6 @@
 #
 
 <div align="center">
-
-  <img src="assets/logo.png" alt="logo" width="400" height="auto" />
   <h1>SWAT - Simple Workspace ATT&CK Tool</h1>
 
   <p>
