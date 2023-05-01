@@ -57,7 +57,7 @@ Run the following to start the SWAT shell.
 swat --credentials path/to/credentials.json --token path/to/token.pickle
 ```
 
-
+https://user-images.githubusercontent.com/99630311/235383894-7d4a9ff0-82f4-463a-875b-96f195e3c9f3.mov
 
 
 
