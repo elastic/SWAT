@@ -52,7 +52,7 @@ setup(
     install_requires=open("requirements.txt", "r").read(),
     entry_points={
         "console_scripts": [
-            "swat = swat.swat.main:main",
+            "swat = swat.main:main",
         ],
     },
 )

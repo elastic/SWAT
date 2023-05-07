@@ -1,7 +1,17 @@
 import argparse
 import cmd
-from .google_auth import authenticate
-from .commands.base_command import BaseCommand
+import importlib
+import os
+import sys
+import typing
+from pathlib import Path
+
+import yaml
+
+from swat.commands.base_command import BaseCommand
+from swat.google_auth import authenticate
+
+CONFIG_DIR =  Path().absolute() / "config.yaml"
 
 class SWATShell(cmd.Cmd):
     intro = """
@@ -20,22 +30,19 @@ class SWATShell(cmd.Cmd):
         self.args = args
 
     def default(self, line):
+        """Handle commands that are not recognized."""
         args_list = line.split()
         command_name = args_list[0]
 
         # Create a new Namespace object containing the credentials and command arguments
         new_args = argparse.Namespace(**vars(self.args))
         new_args.command_args = args_list[1:]
-        print(new_args)
 
         # Dynamically import the command module
         try:
-            command_module = __import__(
-                f"swat.commands.{command_name}",
-                fromlist=["Command"],
-            )
+            command_module = importlib.import_module(f"swat.commands.{command_name}")
             command_class = getattr(command_module, "Command")
-        except (ImportError, AttributeError):
+        except (ImportError, AttributeError) as e:
             print(f"Error: Command '{command_name}' not found.")
             return
 
@@ -49,12 +56,21 @@ class SWATShell(cmd.Cmd):
         command.execute()
 
 
+    def do_coverage(self, arg):
+        """Display ATT&CK coverage."""
+        self.default(f"coverage {arg}")
+
+
+    def do_sim(self, arg):
+        """Simulate ATT&CK techniques."""
+        sefl.default(f"sim {arg}")
+
+
     def do_exit(self, arg):
         """Exit the shell."""
         print(""":: Until Next Time ::""")
         return True
 
-    do_quit = do_exit
 
 def main():
     parser = argparse.ArgumentParser(description="SWAT CLI")
@@ -63,8 +79,12 @@ def main():
     args = parser.parse_args()
 
     # Authenticate with Google Workspace
-    scopes = ['https://www.googleapis.com/auth/admin.directory.user']
+    scopes = yaml.safe_load(CONFIG_DIR.open())['google']['scopes']
     creds = authenticate(scopes, args.credentials, args.token)
 
     # Start the interactive shell
     SWATShell(args).cmdloop()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,4 +1,4 @@
-from commands.base_command import BaseCommand
+from .swat.commands.base_command import BaseCommand
 
 class Command(BaseCommand):
     def __init__(self, args):

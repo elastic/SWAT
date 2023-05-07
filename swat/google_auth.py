@@ -2,6 +2,7 @@ import os
 import pickle
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 
 def authenticate(scopes, credentials_file, token_file):
     creds = None
