@@ -1,3 +1,8 @@
+import yaml
+from pathlib import Path
+
+CONFIG_DIR =  Path().absolute() / "config.yaml"
+
 class BaseCommand:
     def __init__(self, args):
         self.args = args
