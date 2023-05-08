@@ -63,7 +63,7 @@ class SWATShell(cmd.Cmd):
 
     def do_sim(self, arg):
         """Simulate ATT&CK techniques."""
-        sefl.default(f"sim {arg}")
+        self.default(f"sim {arg}")
 
 
     def do_exit(self, arg):
