@@ -25,11 +25,11 @@ class SWATShell(cmd.Cmd):
 \n"""
     prompt = "SWAT> "
 
-    def __init__(self, args):
+    def __init__(self, args: argparse.Namespace) -> None:
         super().__init__()
         self.args = args
 
-    def default(self, line):
+    def default(self, line: str) -> None:
         """Handle commands that are not recognized."""
         args_list = line.split()
         command_name = args_list[0]
@@ -56,17 +56,17 @@ class SWATShell(cmd.Cmd):
         command.execute()
 
 
-    def do_coverage(self, arg):
+    def do_coverage(self, arg: str) -> None:
         """Display ATT&CK coverage."""
         self.default(f"coverage {arg}")
 
 
-    def do_emulate(self, arg):
+    def do_emulate(self, arg: str) -> None:
         """Emulate ATT&CK techniques."""
         self.default(f"emulate {arg}")
 
 
-    def do_exit(self, arg):
+    def do_exit(self, arg: str) -> None:
         """Exit the shell."""
         print(""":: Until Next Time ::""")
         return True

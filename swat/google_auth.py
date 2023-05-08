@@ -1,10 +1,14 @@
 import os
 import pickle
+import typing
+from pathlib import Path
+
+from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
 
-def authenticate(scopes, credentials_file, token_file):
+
+def authenticate(scopes: list, credentials_file: Path, token_file: Path) -> Credentials:
     creds = None
     if os.path.exists(token_file):
         with open(token_file, "rb") as token:
