@@ -1,5 +1,3 @@
-### Title: [Feature Request] Add a new Python module for detecting MITRE ATT&CK Technique against Google Workspace
-
 ---
 name: 🐍 Python Module for MITRE ATT&CK Technique Detection
 about: Suggest a new Python module that detects a specific MITRE ATT&CK technique against Google Workspace
