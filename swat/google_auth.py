@@ -17,6 +17,7 @@ def authenticate(scopes: list, credentials_file: Path, token_file: Path) -> Cred
     else:
         print(f"token file created: {token_file}")
     if not creds:
+        assert credentials_file.exists(), f"Missing credentials file: {credentials_file}"
         flow = InstalledAppFlow.from_client_secrets_file(str(credentials_file), scopes)
         creds = flow.run_local_server(port=0)
 
