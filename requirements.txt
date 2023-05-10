@@ -2,5 +2,7 @@ google-auth
 google-auth-oauthlib
 google-auth-httplib2
 google-api-python-client
+marshmallow==3.19.0
+marshmallow-dataclass==8.5.14
 PyYAML
 click
