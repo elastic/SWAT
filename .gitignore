@@ -69,3 +69,4 @@ venv.bak/
 *token.json
 *token.pickle
 *.pem
+credentials.json

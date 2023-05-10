@@ -10,18 +10,17 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 
 def authenticate(scopes: list, credentials_file: Path, token_file: Path) -> Credentials:
     creds = None
-    if os.path.exists(token_file):
-        with open(token_file, "rb") as token:
-            creds = pickle.load(token)
-
-    if not creds or not creds.valid:
+    if token_file.exists():
+        creds = pickle.loads(token_file.read_bytes())
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(credentials_file, scopes)
-            creds = flow.run_local_server(port=0)
+    else:
+        print(f"token file created: {token_file}")
+    if not creds:
+        assert credentials_file.exists(), f"Missing credentials file: {credentials_file}"
+        flow = InstalledAppFlow.from_client_secrets_file(str(credentials_file), scopes)
+        creds = flow.run_local_server(port=0)
 
-        with open(token_file, "wb") as token:
-            pickle.dump(creds, token)
+    token_file.write_bytes(pickle.dumps(creds))
 
     return creds

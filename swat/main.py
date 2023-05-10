@@ -1,90 +1,31 @@
+
 import argparse
-import cmd
-import importlib
-import os
-import sys
-import typing
 from pathlib import Path
 
-import yaml
-
-from swat.commands.base_command import BaseCommand
-from swat.google_auth import authenticate
-
-CONFIG_DIR =  Path().absolute() / "config.yaml"
-
-class SWATShell(cmd.Cmd):
-    intro = """
-░██████╗░██╗░░░░░░░██╗░█████╗░████████╗
-██╔════╝░██║░░██╗░░██║██╔══██╗╚══██╔══╝
-╚█████╗░░╚██╗████╗██╔╝███████║░░░██║░░░
-░╚═══██╗░░████╔═████║░██╔══██║░░░██║░░░
-██████╔╝░░╚██╔╝░╚██╔╝░██║░░██║░░░██║░░░
-╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝░░╚═╝░░░╚═╝░░░
-:: Simple Workspace ATT&CK Tool ::
-\n"""
-    prompt = "SWAT> "
-
-    def __init__(self, args: argparse.Namespace) -> None:
-        super().__init__()
-        self.args = args
-
-    def default(self, line: str) -> None:
-        """Handle commands that are not recognized."""
-        args_list = line.split()
-        command_name = args_list[0]
-
-        # Create a new Namespace object containing the credentials and command arguments
-        new_args = argparse.Namespace(**vars(self.args))
-        new_args.command_args = args_list[1:]
-
-        # Dynamically import the command module
-        try:
-            command_module = importlib.import_module(f"swat.commands.{command_name}")
-            command_class = getattr(command_module, "Command")
-        except (ImportError, AttributeError) as e:
-            print(f"Error: Command '{command_name}' not found.")
-            return
-
-        # Check if the command class is a subclass of BaseCommand
-        if not issubclass(command_class, BaseCommand):
-            print(f"Error: Command '{command_name}' is not a valid command.")
-            return
-
-        # Instantiate and execute the command
-        command = command_class(new_args)
-        command.execute()
+from . import utils
+from .google_auth import authenticate
+from .shell import SWATShell
 
 
-    def do_coverage(self, arg: str) -> None:
-        """Display ATT&CK coverage."""
-        self.default(f"coverage {arg}")
-
-
-    def do_emulate(self, arg: str) -> None:
-        """Emulate ATT&CK techniques."""
-        self.default(f"emulate {arg}")
-
-
-    def do_exit(self, arg: str) -> None:
-        """Exit the shell."""
-        print(""":: Until Next Time ::""")
-        return True
+ROOT_DIR = Path(__file__).parent.parent.absolute()
+DEFAULT_TOKEN_FILE = ROOT_DIR / "token.pickle"
+DEFAULT_CRED_FILE = ROOT_DIR / "credentials.json"
+CONFIG: dict = utils.load_etc_file("config.yaml")
 
 
 def main():
     parser = argparse.ArgumentParser(description="SWAT CLI")
-    parser.add_argument("--credentials", help="Path to the credentials file", required=True)
-    parser.add_argument("--token", help="Path to the token file", required=True)
+    parser.add_argument("--credentials", default=DEFAULT_CRED_FILE, type=Path, help="Path to the credentials file")
+    parser.add_argument("--token", default=DEFAULT_TOKEN_FILE, type=Path, help="Path to the token file")
     args = parser.parse_args()
 
     # Authenticate with Google Workspace
-    scopes = yaml.safe_load(CONFIG_DIR.open())['google']['scopes']
-    creds = authenticate(scopes, args.credentials, args.token)
+    scopes = CONFIG['google']['scopes']
+    authenticate(scopes, args.credentials.resolve(), args.token.resolve())
 
     # Start the interactive shell
     SWATShell(args).cmdloop()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
