@@ -1,9 +1,0 @@
-google:
-  scopes:
-    - https://www.googleapis.com/auth/admin.directory.user
-mitre:
-  tactics:
-    - collection
-    - credential_access
-    - defense_evasion
-    - initial_access
