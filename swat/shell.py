@@ -1,22 +1,22 @@
-
 import argparse
 import cmd
 import importlib
+import logging
+import os
+import sys
+import typing
 from pathlib import Path
 
 from swat import utils
 from swat.commands.base_command import BaseCommand
-
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 DEFAULT_TOKEN_FILE = ROOT_DIR / "token.pickle"
 DEFAULT_CRED_FILE = ROOT_DIR / "credentials.json"
 CONFIG: dict = utils.load_etc_file("config.yaml")
 
-
-prompt = "SWAT> "
-
-intro = """
+class SWATShell(cmd.Cmd):
+    intro = """
 ░██████╗░██╗░░░░░░░██╗░█████╗░████████╗
 ██╔════╝░██║░░██╗░░██║██╔══██╗╚══██╔══╝
 ╚█████╗░░╚██╗████╗██╔╝███████║░░░██║░░░
@@ -24,11 +24,8 @@ intro = """
 ██████╔╝░░╚██╔╝░╚██╔╝░██║░░██║░░░██║░░░
 ╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝░░╚═╝░░░╚═╝░░░
 :: Simple Workspace ATT&CK Tool ::
-
-"""
-
-
-class SWATShell(cmd.Cmd):
+\n"""
+    prompt = "SWAT> "
 
     def __init__(self, args: argparse.Namespace) -> None:
         super().__init__()
@@ -47,12 +44,12 @@ class SWATShell(cmd.Cmd):
             command_module = importlib.import_module(f"swat.commands.{command_name}")
             command_class = getattr(command_module, "Command")
         except (ImportError, AttributeError) as e:
-            print(f"Error: Command '{command_name}' not found.")
+            logging.error(f"Command '{command_name}' not found.")
             return
 
         # Check if the command class is a subclass of BaseCommand
         if not issubclass(command_class, BaseCommand):
-            print(f"Error: Command '{command_name}' is not a valid command.")
+            logging.error(f"Error: Command '{command_name}' is not a valid command.")
             return
 
         try:
@@ -60,7 +57,11 @@ class SWATShell(cmd.Cmd):
             command = command_class(**new_args)
             command.execute()
         except AssertionError as e:
-            print(f"Error: {e}")
+            logging.error(f"Error: {e}")
+
+    def do_authenticate(self, arg: str) -> None:
+        """Authenticate to the Google Workspace"""
+        self.default(f"authenticate {arg}")
 
     def do_coverage(self, arg: str) -> None:
         """Display ATT&CK coverage."""
@@ -70,9 +71,8 @@ class SWATShell(cmd.Cmd):
         """Emulate ATT&CK techniques."""
         self.default(f"emulate {arg}")
 
-    @staticmethod
-    def do_exit(arg: str) -> bool:
+
+    def do_exit(self, arg: str) -> bool:
         """Exit the shell."""
         print(""":: Until Next Time ::""")
         return True
-
