@@ -70,3 +70,6 @@ venv.bak/
 *token.pickle
 *.pem
 credentials.json
+
+# Logging
+*.log
