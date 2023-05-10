@@ -1,4 +1,3 @@
-import typing
 
 from swat.commands.base_command import BaseCommand
 

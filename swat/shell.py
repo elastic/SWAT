@@ -67,7 +67,6 @@ class SWATShell(cmd.Cmd):
         """Display ATT&CK coverage."""
         self.default(f"coverage {arg}")
 
-
     def do_emulate(self, arg: str) -> None:
         """Emulate ATT&CK techniques."""
         self.default(f"emulate {arg}")

@@ -4,7 +4,8 @@ from typing import List
 
 import yaml
 
-CONFIG_DIR =  Path().absolute() / "config.yaml"
+from typing import List
+
 
 class BaseCommand:
     def __init__(self, command: str = None, args: List[str] = [], credentials: Path = None,
