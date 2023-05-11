@@ -71,6 +71,9 @@ class SWATShell(cmd.Cmd):
         """Emulate ATT&CK techniques."""
         self.default(f"emulate {arg}")
 
+    def do_clear(self, arg: str) -> None:
+        """Clear terminal"""
+        os.system('cls||clear')
 
     def do_exit(self, arg: str) -> bool:
         """Exit the shell."""
