@@ -9,7 +9,7 @@ def configure_logging(config: dict = None) -> None:
     # Set up console handler
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
-    console_handler.setFormatter(logging.Formatter(log_console_format))
+    console_handler.setFormatter(logging.Formatter(log_console_format, "%H:%M:%S"))
 
     # Set up file handler
     log_file = config['logging']['path']
