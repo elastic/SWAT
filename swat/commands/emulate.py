@@ -18,6 +18,7 @@ class AttackData:
 class Command(BaseCommand):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
+        self.kwargs = kwargs
         assert len(self.args) > 0, "No emulation command provided."
         self.attack = AttackData(self.args[0], self.args[1])
 
@@ -25,7 +26,7 @@ class Command(BaseCommand):
         try:
             attack_module = importlib.import_module(f"swat.commands.{attack.tactic}.{attack.technique}")
             command_module = getattr(attack_module, "Command")
-            return command_module()
+            return command_module(**self.kwargs)
         except (ImportError, AttributeError) as e:
             self.logger.error(f"Attack module {attack} not found.")
             return None

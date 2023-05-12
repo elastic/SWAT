@@ -30,6 +30,7 @@ class SWATShell(cmd.Cmd):
     def __init__(self, args: argparse.Namespace) -> None:
         super().__init__()
         self.args = args
+        self.creds = None
 
     def default(self, line: str) -> None:
         """Handle commands that are not recognized."""
@@ -37,7 +38,7 @@ class SWATShell(cmd.Cmd):
         command_name = args_list[0]
 
         # Create a new Namespace object containing the credentials and command arguments
-        new_args = dict(command=command_name, args=args_list[1:], config=CONFIG, **(vars(self.args)))
+        new_args = dict(command=command_name, args=args_list[1:], config=CONFIG, creds=self.creds, **(vars(self.args)))
 
         # Dynamically import the command module
         try:
@@ -55,13 +56,13 @@ class SWATShell(cmd.Cmd):
         try:
             # Instantiate and execute the command
             command = command_class(**new_args)
-            command.execute()
+            return command.execute() or None
         except AssertionError as e:
             logging.error(f"Error: {e}")
 
     def do_authenticate(self, arg: str) -> None:
         """Authenticate to the Google Workspace"""
-        self.default(f"authenticate {arg}")
+        self.creds = self.default(f"authenticate {arg}") # Store the authenticated credentials
 
     def do_coverage(self, arg: str) -> None:
         """Display ATT&CK coverage."""

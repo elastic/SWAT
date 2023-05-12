@@ -23,6 +23,7 @@ class Command(BaseCommand):
             creds = pickle.loads(self.token.read_bytes())
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
+                return creds
         else:
             self.logger.info(f"Token file created: {self.token}")
         if not creds:
@@ -32,4 +33,4 @@ class Command(BaseCommand):
 
         self.token.write_bytes(pickle.dumps(creds))
 
-        return
+        return creds
