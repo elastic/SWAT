@@ -9,13 +9,14 @@ from typing import List
 
 class BaseCommand:
     def __init__(self, command: str = None, args: List[str] = [], credentials: Path = None,
-                 token: Path = None, config: dict = None) -> None:
+                 token: Path = None, config: dict = None, creds=None) -> None:
         self.command = command
         self.args = args
         self.config = config
         self.logger = logging.getLogger(__name__)
         self.credentials = credentials
         self.token = token
+        self.creds = creds  # Add this line
 
 
     def execute(self) -> None:
