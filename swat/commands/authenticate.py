@@ -28,7 +28,7 @@ class Command(BaseCommand):
             self.logger.info(f"Token file created: {self.token}")
         if not creds:
             assert self.credentials.exists(), self.logger.error(f"Missing credentials file: {self.credentials}")
-            flow = InstalledAppFlow.from_client_secrets_file(str(self.credentials), scopes)
+            flow = InstalledAppFlow.from_client_secrets_file(str(self.credentials), self.config['google']['scopes'])
             creds = flow.run_local_server(port=0)
 
         self.token.write_bytes(pickle.dumps(creds))
