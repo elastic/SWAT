@@ -73,6 +73,9 @@ class SWATShell(cmd.Cmd):
         """Emulate ATT&CK techniques."""
         self.default(f"emulate {arg}")
 
+    def do_data(self, arg: str) -> None:
+        """Display Google Workspace data."""
+        self.default(f"data {arg}")
 
     def do_exit(self, arg: str) -> bool:
         """Exit the shell."""
