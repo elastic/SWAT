@@ -1,0 +1,11 @@
+external_account:
+  email: external@gmail.com
+  app_password: application_password
+target_user: target@gmail.om
+email:
+  subject: "SWAT T1566.002 Emulation"
+  body: "SWAT T1566.002 Emulation"
+  file_name: t1566_002.txt
+  file_contents: "SWAT T1566.002 Emulation"
+server:
+  sleep: 60

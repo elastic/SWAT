@@ -74,3 +74,6 @@ venv.bak/
 # Logging
 logs/*
 *.log
+
+# Staged artifacts
+staging/*
