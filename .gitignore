@@ -76,3 +76,6 @@ venv.bak/
 # Logging
 logs/*
 *.log
+
+# Staged files
+/staging

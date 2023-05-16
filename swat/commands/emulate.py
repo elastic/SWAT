@@ -22,7 +22,7 @@ class Command(BaseCommand):
         super().__init__(**kwargs)
         self.kwargs = kwargs
         assert len(self.args) > 0, "No emulation command provided."
-        emulation_commands = [c for c in self.args if c.replace("-","_") in 
+        emulation_commands = [c for c in self.args if c.replace("-","_") in
                               Command.__dict__ or c == "list-commands"]
         if emulation_commands:
             self.command = emulation_commands[0].replace("-","_")
@@ -37,7 +37,7 @@ class Command(BaseCommand):
         try:
             attack_module = importlib.import_module(f"swat.emulations.{attack.tactic}.{attack.technique}")
             emulation_module = getattr(attack_module, "Emulation")
-            return emulation_module(tactic=attack.tactic, 
+            return emulation_module(tactic=attack.tactic,
                                     technique=attack.technique,
                                     **self.kwargs)
         except (ImportError, AttributeError) as e:
