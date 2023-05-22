@@ -1,6 +1,6 @@
+import json
 import time
 
-import json
 import pandas as pd
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -28,11 +28,11 @@ class Command(BaseCommand):
             request = self.service.activities().list_next(request, activities_result)
 
         df = pd.DataFrame(activities)
-        
+
         if filters:
             for column, value in filters.items():
                 df = df[df[column] == value]
-        
+
         return df
 
     def execute(self):
@@ -40,6 +40,6 @@ class Command(BaseCommand):
             df = self.fetch_data()
             for i in range(df.shape[0]):
                 row_as_dict = df.iloc[i].to_dict()
-                print(json.dumps(row_as_dict, indent=2)) 
+                print(json.dumps(row_as_dict, indent=2))
         except HttpError as error:
             self.logger.error(f"An error occurred: {error}")
