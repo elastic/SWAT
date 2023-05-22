@@ -93,7 +93,7 @@ class BaseEmulationCommand(Command):
         """Return a list of possible and required arguments for the command."""
         # TODO: may be better to just use marshmallow_dataclass to validate
         # [{
-        #     'name'
+        #     'name' (jon.doe)
         #     'required'
         #     'type'
 

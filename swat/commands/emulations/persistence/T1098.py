@@ -1,8 +1,8 @@
 
-from swat.commands.base_command import BaseCommand
+from swat.commands.emulate import BaseEmulationCommand
 
 
-class Command(BaseCommand):
+class Command(BaseEmulationCommand):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
 
