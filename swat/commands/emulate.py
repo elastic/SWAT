@@ -56,8 +56,7 @@ class Command(BaseCommand):
     @staticmethod
     def list_tactics(**kwargs):
         """List all available tactics"""
-        tactics_dir = Path(EMULATIONS_DIR)
-        tactics = "|".join([tactic.name for tactic in tactics_dir.iterdir() if
+        tactics = "|".join([tactic.name for tactic in EMULATIONS_DIR.iterdir() if
                    tactic.is_dir() and not tactic.name.startswith('_')])
         return tactics
 
