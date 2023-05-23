@@ -58,7 +58,7 @@ class Command(BaseCommand):
         """List all available tactics"""
         tactics_dir = Path(EMULATIONS_DIR)
         tactics = "|".join([tactic.name for tactic in tactics_dir.iterdir() if
-                   tactic.is_dir() and tactic.name != '__pycache__'])
+                   tactic.is_dir() and not tactic.name.startswith('_')])
         return tactics
 
 
