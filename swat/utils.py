@@ -1,10 +1,10 @@
 
+import json
+import os
 from pathlib import Path
 from typing import Union
 
-import json
 import yaml
-
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 ETC_DIR = ROOT_DIR / "swat" / "etc"
@@ -20,3 +20,8 @@ def load_etc_file(filename: str) -> Union[str, dict]:
         return json.loads(contents)
     elif path.suffix in (".yaml", ".yml"):
         return yaml.safe_load(contents)
+
+
+def clear_terminal():
+    """Clear the terminal."""
+    _ = os.system('cls||clear')
