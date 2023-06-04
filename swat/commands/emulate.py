@@ -84,8 +84,3 @@ class Command(BaseCommand):
             self.logger.info(f"Executing command - {self.command}")
             self.logger.info(f"Command results - {getattr(self, self.command)(args=self.args)}")
 
-
-
-
-
-
