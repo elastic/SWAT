@@ -9,6 +9,7 @@ from pathlib import Path
 
 from swat import utils
 from swat.commands.base_command import BaseCommand
+from .utils import clear_terminal
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 DEFAULT_TOKEN_FILE = ROOT_DIR / "token.pickle"
@@ -38,7 +39,7 @@ class SWATShell(cmd.Cmd):
         command_name = args_list[0]
 
         # Create a new Namespace object containing the credentials and command arguments
-        new_args = dict(command=command_name, args=args_list[1:], 
+        new_args = dict(command=command_name, args=args_list[1:],
                         config=CONFIG, creds=self.creds, **(vars(self.args)))
 
         # Dynamically import the command module
@@ -76,6 +77,10 @@ class SWATShell(cmd.Cmd):
     def do_data(self, arg: str) -> None:
         """Display Google Workspace data."""
         self.default(f"data {arg}")
+
+    def do_clear(self, arg: None) -> None:
+        """Clear the screen."""
+        clear_terminal()
 
     def do_exit(self, arg: str) -> bool:
         """Exit the shell."""
