@@ -1,6 +1,7 @@
 google:
   scopes:
     - https://www.googleapis.com/auth/admin.directory.user
+    - https://www.googleapis.com/auth/admin.reports.audit.readonly
 mitre:
   tactics:
     - collection

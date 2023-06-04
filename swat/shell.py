@@ -38,7 +38,8 @@ class SWATShell(cmd.Cmd):
         command_name = args_list[0]
 
         # Create a new Namespace object containing the credentials and command arguments
-        new_args = dict(command=command_name, args=args_list[1:], config=CONFIG, creds=self.creds, **(vars(self.args)))
+        new_args = dict(command=command_name, args=args_list[1:], 
+                        config=CONFIG, creds=self.creds, **(vars(self.args)))
 
         # Dynamically import the command module
         try:
@@ -72,6 +73,9 @@ class SWATShell(cmd.Cmd):
         """Emulate ATT&CK techniques."""
         self.default(f"emulate {arg}")
 
+    def do_data(self, arg: str) -> None:
+        """Display Google Workspace data."""
+        self.default(f"data {arg}")
 
     def do_exit(self, arg: str) -> bool:
         """Exit the shell."""
