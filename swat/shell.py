@@ -2,9 +2,6 @@ import argparse
 import cmd
 import importlib
 import logging
-import os
-import sys
-import typing
 from pathlib import Path
 
 from swat import utils
@@ -15,6 +12,7 @@ ROOT_DIR = Path(__file__).parent.parent.absolute()
 DEFAULT_TOKEN_FILE = ROOT_DIR / "token.pickle"
 DEFAULT_CRED_FILE = ROOT_DIR / "credentials.json"
 CONFIG: dict = utils.load_etc_file("config.yaml")
+
 
 class SWATShell(cmd.Cmd):
     intro = """

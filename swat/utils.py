@@ -25,7 +25,7 @@ def load_etc_file(filename: str) -> Union[str, dict]:
         return yaml.safe_load(contents)
 
 
-def clear_terminal() -> None :
+def clear_terminal() -> None:
     """Clear the terminal."""
     _ = os.system('cls||clear')
 

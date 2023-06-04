@@ -2,10 +2,6 @@ import logging
 from pathlib import Path
 from typing import List
 
-import yaml
-
-from typing import List
-
 
 class BaseCommand:
     def __init__(self, command: str = None, args: List[str] = [], credentials: Path = None,
@@ -17,7 +13,6 @@ class BaseCommand:
         self.credentials = credentials
         self.token = token
         self.creds = creds  # Add this line
-
 
     def execute(self) -> None:
         raise NotImplementedError("The 'execute' method must be implemented in each command class.")
