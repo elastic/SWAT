@@ -1,5 +1,6 @@
 import logging
 
+
 def configure_logging(config: dict = None) -> None:
     """Logging for the entire application."""
     # Set up logging format

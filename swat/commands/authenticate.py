@@ -1,13 +1,10 @@
 import pickle
-import logging
-import typing
-from pathlib import Path
 
 from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 from swat.commands.base_command import BaseCommand
+
 
 class Command(BaseCommand):
     def __init__(self, **kwargs) -> None:

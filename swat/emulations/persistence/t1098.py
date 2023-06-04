@@ -1,5 +1,4 @@
 from swat.emulations.base_emulation import BaseEmulation
-from swat.commands.emulate import AttackData
 
 
 class Emulation(BaseEmulation):

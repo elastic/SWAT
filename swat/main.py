@@ -12,6 +12,7 @@ DEFAULT_TOKEN_FILE = ROOT_DIR / "token.pickle"
 DEFAULT_CRED_FILE = ROOT_DIR / "credentials.json"
 CONFIG: dict = utils.load_etc_file("config.yaml")
 
+
 def main():
     configure_logging(CONFIG)
     parser = argparse.ArgumentParser(description="SWAT CLI")
@@ -21,6 +22,7 @@ def main():
 
     # Start the interactive shell
     SWATShell(args).cmdloop()
+
 
 if __name__ == "__main__":
     main()
