@@ -4,7 +4,7 @@ from typing import List
 
 
 class BaseCommand:
-    def __init__(self, command: str = None, args: List[str] = [], credentials: Path = None,
+    def __init__(self, command: str = None, args: List[str] = list, credentials: Path = None,
                  token: Path = None, config: dict = None, creds=None) -> None:
         self.command = command
         self.args = args

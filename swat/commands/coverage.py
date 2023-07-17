@@ -35,8 +35,8 @@ class Command(BaseCommand):
         """List all available techniques for a given tactic."""
         if tactic_name not in self.tactics:
             raise ValueError(f"Tactic {tactic_name} not found.")
-        TACTIC_DIR = EMULATIONS_DIR / tactic_name
-        techniques = {tactic_name: [f.stem for f in TACTIC_DIR.iterdir()
+        tactic_dir = EMULATIONS_DIR / tactic_name
+        techniques = {tactic_name: [f.stem for f in tactic_dir.iterdir()
                       if f.is_file() and not f.name.startswith('__')]}
         return techniques
 
@@ -84,6 +84,8 @@ class Command(BaseCommand):
                 tactics_and_techniques = self.get_all_techniques()
             elif self.args.tactic:
                 tactics_and_techniques = self.get_techniques_by_tactic(self.args.tactic)
+            else:
+                return
             self.load_tactics_and_techniques(tactics_and_techniques)
             print(pd.DataFrame(self.coverage, columns=DATAFRAME_COLS)
                   .to_markdown(index=False, maxcolwidths=[None, 20], tablefmt="fancy_grid"))
