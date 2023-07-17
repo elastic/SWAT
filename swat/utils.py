@@ -2,12 +2,14 @@
 import gzip
 import json
 import os
+import sys
 from functools import lru_cache
 from pathlib import Path
 from typing import Union
 
 import requests
 import yaml
+
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 ETC_DIR = ROOT_DIR / "swat" / "etc"
@@ -27,7 +29,7 @@ def load_etc_file(filename: str) -> Union[str, dict]:
 
 def clear_terminal() -> None:
     """Clear the terminal."""
-    _ = os.system('cls||clear')
+    os.system('cls' if sys.platform == "windows" else "clear")
 
 
 def validate_args(parser, args):
@@ -49,8 +51,7 @@ def download_attack_data() -> None:
     response.raise_for_status()
     gzip_file_path = ETC_DIR / "enterprise-attack.json.gz"
     compressed_content = gzip.compress(response.content)
-    with open(gzip_file_path, 'wb+') as file:
-        file.write(compressed_content)
+    gzip_file_path.write_bytes(compressed_content)
 
 
 @lru_cache(maxsize=1)
@@ -66,9 +67,8 @@ def load_attack_data() -> dict:
 
 
 @lru_cache(maxsize=128)
-def lookup_technique_by_id(technique_id):
+def lookup_technique_by_id(technique_id) -> str | None:
     """Look up a technique by ID in ATT&CK enterprise data."""
-
     data = load_attack_data()
     for item in data["objects"]:
         if item["type"] == "attack-pattern":
@@ -76,4 +76,3 @@ def lookup_technique_by_id(technique_id):
                 for ref in item["external_references"]:
                     if ref["source_name"] == "mitre-attack" and ref["external_id"] == technique_id:
                         return item
-    return None

@@ -3,9 +3,8 @@ import argparse
 from pathlib import Path
 
 from . import utils
-from .shell import SWATShell
 from .logger import configure_logging
-
+from .shell import SWATShell
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 DEFAULT_TOKEN_FILE = ROOT_DIR / "token.pickle"
