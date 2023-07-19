@@ -1,7 +1,0 @@
-google-auth==2.19.1                     # via google-api-core
-google-auth-oauthlib==1.0.0             # via google-auth-oauthlib
-google-auth-httplib2==0.1.0             # via google-auth-httplib2
-google-api-python-client==2.88.0        # via google-api-python-client
-PyYAML==6.0                             # via PyYAML
-pandas==2.0.2                           # via pandas
-requests==2.30.0
