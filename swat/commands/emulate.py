@@ -1,8 +1,11 @@
+
 import importlib
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
 from swat.commands.base_command import BaseCommand
+from swat.emulations.base_emulation import BaseEmulation
 
 EMULATIONS_DIR = Path(__file__).parent.parent.absolute() / 'emulations'
 
@@ -17,59 +20,52 @@ class AttackData:
 class Command(BaseCommand):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.kwargs = kwargs
-        assert len(self.args) > 0, "No emulation command provided."
-        emulation_commands = [c for c in self.args if c.replace("-", "_") in
-                              Command.__dict__ or c == "list-commands"]
-        if emulation_commands:
-            self.command = emulation_commands[0].replace("-", "_")
-            self.attack = None
-        else:
-            assert len(self.args) > 1, "No emulation command provided."
-            self.attack = AttackData(self.args[0], self.args[1])
-            self.command = "emulate"
+        self.emulation_command = None
 
-    def load_attack(self, attack: AttackData) -> any:
+        args = kwargs.pop('args', None)
+        if args:
+            self.emulation_name, *self.emulation_args = args
+            if self.emulation_name not in self.get_emulate_commands():
+                self.logger.info(f"Unknown emulation command: {self.emulation_name}")
+            else:
+                emulation_command_class = self.load_emulation_command_class(self.emulation_name)
+                self.emulation_command = emulation_command_class(args=self.emulation_args, **kwargs)
+
+    @staticmethod
+    def get_dotted_command_path(command_name: str) -> str:
+        """Return the path to the command module."""
+        path = list(EMULATIONS_DIR.rglob(f"{command_name}.py"))
+        assert len(path) == 1, f"Error: Ambiguous command '{command_name}' more than one found with that name"
+        dotted = str(path[0].relative_to(EMULATIONS_DIR)).replace(os.sep, '.')[:-3]
+        return dotted
+
+    @staticmethod
+    def get_emulate_commands() -> list[str]:
+        """Return a list of possible emulation commands."""
+        commands = [c.stem for c in EMULATIONS_DIR.rglob('*.py') if not c.name.startswith('_') and
+                    not c.parent.name == "emulations"]
+        return commands
+
+    def load_emulation_command_class(self, name: str) -> type[BaseEmulation] | None:
+        # Dynamically import the command module
         try:
-            attack_module = importlib.import_module(f"swat.emulations.{attack.tactic}.{attack.technique}")
-            emulation_module = getattr(attack_module, "Emulation")
-            return emulation_module(tactic=attack.tactic, technique=attack.technique, **self.kwargs)
+            dotted_command = self.get_dotted_command_path(name)
+            command_module = importlib.import_module(f"swat.emulations.{dotted_command}")
+            command_class = getattr(command_module, "Emulation")
         except (ImportError, AttributeError) as e:
-            self.logger.error(f"{e}")
-            return None
+            print(f"Error: Command '{self.emulation_name}' not found.")
+            return
 
-    def list_commands(self):
-        """List all available commands"""
-        commands = [method.replace("_", "-") for method in dir(self) if not method.startswith("_")
-                    and callable(getattr(self, method)) and method != "execute"
-                    and method != "list_commands" and method != "load_attack"]
-        return '|'.join(commands)
+        # Check if the command class is a subclass of BaseCommand
+        if not issubclass(command_class, BaseEmulation):
+            print(f"Error: Command '{self.emulation_command}' is not a valid command.")
+            return
 
-    @staticmethod
-    def list_tactics(**kwargs):
-        """List all available tactics"""
-        tactics = "|".join([tactic.name for tactic in EMULATIONS_DIR.iterdir() if
-                            tactic.is_dir() and not tactic.name.startswith('_')])
-        return tactics
-
-    @staticmethod
-    def list_techniques(**kwargs):
-        """List all available techniques for a given tactic"""
-        tactic = kwargs.get('args')[1]
-        tactic_dir = EMULATIONS_DIR / tactic
-        if not tactic_dir.exists():
-            return f"No techniques found for tactic: {tactic}"
-        techniques = '|'.join([technique.stem for technique in tactic_dir.glob('*.py')
-                               if technique.stem != '__init__'])
-        return techniques
+        return command_class
 
     def execute(self) -> None:
-        if self.attack is not None:
-            self.logger.info(f"Loading emulation for {self.attack}")
-            emulate = self.load_attack(self.attack)
-            emulate.execute()
-        elif self.command == "list_commands":
-            self.logger.info(f"Available commands - {self.list_commands()}")
+        if not self.emulation_command:
+            self.logger.info(f"Available commands: " + '\n'.join(self.get_emulate_commands()))
         else:
-            self.logger.info(f"Executing command - {self.command}")
-            self.logger.info(f"Command results - {getattr(self, self.command)(args=self.args)}")
+            self.logger.info(f"Executing command: {self.emulation_name}")
+            self.emulation_command.execute()

@@ -37,8 +37,7 @@ def validate_args(parser, args):
     try:
         parsed_args, unknown = parser.parse_known_args(args)
         if unknown:
-            unknown_args = [a for a in unknown if a.startswith('-')]
-            raise ValueError(f"Unknown arguments {unknown_args}")
+            raise ValueError(f"Unknown arguments {unknown}")
     except SystemExit:
         return None
     return parsed_args
