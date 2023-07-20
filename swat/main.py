@@ -1,5 +1,6 @@
 
 import argparse
+import logging
 from pathlib import Path
 
 from . import utils
@@ -13,11 +14,14 @@ CONFIG: dict = utils.load_etc_file("config.yaml")
 
 
 def main():
-    configure_logging(CONFIG)
     parser = argparse.ArgumentParser(description="SWAT CLI")
     parser.add_argument("--credentials", default=DEFAULT_CRED_FILE, type=Path, help="Path to the credentials file")
     parser.add_argument("--token", default=DEFAULT_TOKEN_FILE, type=Path, help="Path to the token file")
+    parser.add_argument('--debug', action='store_true', help='Debug mode')
     args = parser.parse_args()
+
+    level = logging.DEBUG if args.debug else logging.INFO
+    configure_logging(CONFIG, level)
 
     # Start the interactive shell
     SWATShell(args).cmdloop()

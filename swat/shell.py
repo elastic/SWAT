@@ -28,6 +28,10 @@ class SWATShell(cmd.Cmd):
 
     def __init__(self, args: argparse.Namespace) -> None:
         super().__init__()
+        debug = args.__dict__.pop("debug")
+        if debug:
+            logging.info("Logging in debug mode.")
+
         self.args = args
         self.creds = None
 
