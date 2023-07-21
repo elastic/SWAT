@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "swat"
-version = "0.1.0"
-description = "SWAT is a red teaming tool for Google Workspace environments."
+version = "0.0.1"
+description = "Simple Workspace Attack Tool for emulating against Google Workspace environments."
 authors = ["Terrance DeJesus <contact@dejesus.io>"]
 license = "Apache-2.0"
 readme = "README.md"
@@ -22,6 +22,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
+colorama = "^0.4.6"
 google-auth = "^2.19.1"
 google-auth-oauthlib = "^1.0.0"
 google-auth-httplib2 = "^0.1.0"
