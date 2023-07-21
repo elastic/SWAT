@@ -23,22 +23,25 @@ class SWATShell(cmd.Cmd):
 ██████╔╝░░╚██╔╝░╚██╔╝░██║░░██║░░░██║░░░
 ╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝░░╚═╝░░░╚═╝░░░
 :: Simple Workspace ATT&CK Tool ::
-\n"""
+
+"""
     prompt = "SWAT> "
 
     def __init__(self, args: argparse.Namespace) -> None:
         super().__init__()
+        debug = args.__dict__.pop("debug")
+        if debug:
+            logging.info("Logging in debug mode.")
+
         self.args = args
         self.creds = None
 
     def default(self, line: str) -> None:
         """Handle commands that are not recognized."""
-        args_list = line.split()
-        command_name = args_list[0]
+        command_name, *args = line.split()
 
         # Create a new Namespace object containing the credentials and command arguments
-        new_args = dict(command=command_name, args=args_list[1:],
-                        config=CONFIG, creds=self.creds, **(vars(self.args)))
+        new_args = dict(command=command_name, args=args, config=CONFIG, creds=self.creds, **(vars(self.args)))
 
         # Dynamically import the command module
         try:
