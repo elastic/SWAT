@@ -29,7 +29,7 @@ def load_etc_file(filename: str) -> Union[str, dict]:
 
 def clear_terminal() -> None:
     """Clear the terminal."""
-    os.system('cls' if sys.platform == "windows" else "clear")
+    os.system("cls" if sys.platform == "windows" else "clear")
 
 
 def validate_args(parser, args):

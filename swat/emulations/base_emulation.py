@@ -1,22 +1,16 @@
 
 import logging
 from argparse import ArgumentParser
-from pathlib import Path
 
 from .. import utils
+from ..base import SWAT
 
 
 class BaseEmulation:
-    def __init__(self, credentials: Path, token: Path, config: dict, parser: ArgumentParser, args: list,
-                 **extra) -> None:
-        self.config = config
-        self.credentials = credentials
-        self.token = token
+    def __init__(self, parser: ArgumentParser, args: list, obj: SWAT, **extra) -> None:
+        self.obj = obj
         self.logger = logging.getLogger(__name__)
-        self.creds = extra['creds']
-
         self.tactic, self.technique = self.parse_attack_from_class()
-
         self.args = utils.validate_args(parser, args)
 
 
