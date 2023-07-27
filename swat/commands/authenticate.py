@@ -1,5 +1,4 @@
 
-import argparse
 import pickle
 
 from google.auth.transport.requests import Request
@@ -9,11 +8,10 @@ from swat.commands.base_command import BaseCommand
 
 
 class Command(BaseCommand):
+    """Authenticate against a Google Workspace account."""
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.parser = argparse.ArgumentParser(prog='authenticate',
-                                              description='SWAT authentication.',
-                                              usage='coverage [options]')
 
     def execute(self) -> None:
         """Authenticate with Google Workspace."""

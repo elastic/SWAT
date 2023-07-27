@@ -9,9 +9,11 @@ from swat.commands.base_command import BaseCommand
 
 
 class Command(BaseCommand):
+    """Export the generated data logs from workspace."""
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.service = build('admin', 'reports_v1', credentials=self.creds)
+        self.service = build('admin', 'reports_v1', credentials=self.obj.creds)
         self.duration = kwargs['args'][1]
         self.application = kwargs['args'][0]
 

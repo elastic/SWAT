@@ -1,4 +1,5 @@
 
+import argparse
 import gzip
 import json
 import os
@@ -13,6 +14,14 @@ import yaml
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 ETC_DIR = ROOT_DIR / "swat" / "etc"
+
+
+class CustomHelpFormatter(argparse.HelpFormatter):
+    """Override the default help formatter to exclude usage."""
+
+    def add_usage(self, usage, actions, groups, prefix=None):
+        # Do nothing, effectively skipping usage output
+        pass
 
 
 def load_etc_file(filename: str) -> Union[str, dict]:
