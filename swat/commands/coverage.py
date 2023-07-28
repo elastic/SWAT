@@ -1,9 +1,10 @@
 
 import pandas as pd
 
-from swat.commands.base_command import BaseCommand
-from swat.utils import (ROOT_DIR, download_attack_data, lookup_technique_by_id,
-                        validate_args)
+from ..commands.base_command import BaseCommand
+from ..utils import ROOT_DIR
+from ..attack import download_attack_data, lookup_technique_by_id
+from ..misc import validate_args
 
 EMULATIONS_DIR = ROOT_DIR / 'swat' / 'emulations'
 DATAFRAME_COLS = ['id', 'tactic', 'name', 'reference', 'description', 'emulation']
