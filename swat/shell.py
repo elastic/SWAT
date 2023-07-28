@@ -75,7 +75,7 @@ class SWATShell(cmd.Cmd):
         try:
             command_module = importlib.import_module(f"swat.commands.{name}")
             command_class = getattr(command_module, "Command")
-        except (ImportError, AttributeError, ValueError) as e:
+        except (ImportError, AttributeError, ValueError, AssertionError) as e:
             logging.error(f"{e}")
             # raise AttributeError(f"Command '{name}' not found: {e}.")
             return
@@ -108,7 +108,10 @@ class SWATShell(cmd.Cmd):
                     arg, *remaining = arg.split()
                     emulation = remaining[0] if remaining else None
                     if emulation in EmulateCommand.get_emulate_commands():
-                        command_class = EmulateCommand.load_emulation_command_class(emulation)
+                        try:
+                            command_class = EmulateCommand.load_emulation_command_class(emulation)
+                        except AssertionError as e:
+                            raise AssertionError(f"Emulation '{emulation}': {e}.")
                         print(f"{command_class.help()}")
                     else:
                         print(f"Unrecognized emulation: {emulation}, options: "

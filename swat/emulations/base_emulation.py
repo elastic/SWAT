@@ -40,4 +40,4 @@ class BaseEmulation:
     @classmethod
     def load_parser(cls, *args, **kwargs) -> argparse.ArgumentParser:
         """Return custom parser."""
-        return argparse.ArgumentParser(formatter_class=utils.CustomHelpFormatter, add_help=False, *args, **kwargs)
+        return utils.get_custom_argparse_formatter(*args, **kwargs)

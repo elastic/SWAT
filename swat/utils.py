@@ -23,6 +23,10 @@ class CustomHelpFormatter(argparse.HelpFormatter):
         # Do nothing, effectively skipping usage output
         pass
 
+def get_custom_argparse_formatter(*args, **kwargs) -> argparse.ArgumentParser:
+    assert "description" in kwargs and "prog" in kwargs, "Must provide 'description' and 'prog' arguments."
+    return argparse.ArgumentParser(formatter_class=CustomHelpFormatter, add_help=False, *args, **kwargs)
+
 
 def load_etc_file(filename: str) -> Union[str, dict]:
     """Load a  file from the etc directory."""
