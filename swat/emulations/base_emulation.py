@@ -3,8 +3,8 @@ import argparse
 import logging
 from typing import Optional
 
-from .. import utils
 from ..base import SWAT
+from ..misc import get_custom_argparse_formatter, validate_args
 
 
 class BaseEmulation:
@@ -17,7 +17,7 @@ class BaseEmulation:
         self.tactic, self.technique = self.parse_attack_from_class()
 
         assert self.parser, "'parser' must be implemented in each emulation command class"
-        self.args = utils.validate_args(self.parser, args)
+        self.args = validate_args(self.parser, args)
 
     def execute(self) -> None:
         raise NotImplementedError("The 'execute' method must be implemented in each emulation class.")
@@ -40,4 +40,4 @@ class BaseEmulation:
     @classmethod
     def load_parser(cls, *args, **kwargs) -> argparse.ArgumentParser:
         """Return custom parser."""
-        return utils.get_custom_argparse_formatter(*args, **kwargs)
+        return get_custom_argparse_formatter(*args, **kwargs)

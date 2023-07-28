@@ -4,7 +4,7 @@ import logging
 from typing import List
 
 from ..base import SWAT
-from .. import utils
+from ..misc import get_custom_argparse_formatter
 
 
 class BaseCommand:
@@ -26,4 +26,4 @@ class BaseCommand:
     @classmethod
     def load_parser(cls, *args, **kwargs) -> argparse.ArgumentParser:
         """Return custom parser."""
-        return utils.get_custom_argparse_formatter(*args, **kwargs)
+        return get_custom_argparse_formatter(*args, **kwargs)
