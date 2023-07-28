@@ -1,4 +1,5 @@
 
+import argparse
 import gzip
 import json
 import os
@@ -15,6 +16,18 @@ ROOT_DIR = Path(__file__).parent.parent.absolute()
 ETC_DIR = ROOT_DIR / "swat" / "etc"
 
 
+class CustomHelpFormatter(argparse.HelpFormatter):
+    """Override the default help formatter to exclude usage."""
+
+    def add_usage(self, usage, actions, groups, prefix=None):
+        # Do nothing, effectively skipping usage output
+        pass
+
+def get_custom_argparse_formatter(*args, **kwargs) -> argparse.ArgumentParser:
+    assert "description" in kwargs and "prog" in kwargs, "Must provide 'description' and 'prog' arguments."
+    return argparse.ArgumentParser(formatter_class=CustomHelpFormatter, add_help=False, *args, **kwargs)
+
+
 def load_etc_file(filename: str) -> Union[str, dict]:
     """Load a  file from the etc directory."""
     path = ETC_DIR / filename
@@ -29,7 +42,7 @@ def load_etc_file(filename: str) -> Union[str, dict]:
 
 def clear_terminal() -> None:
     """Clear the terminal."""
-    os.system('cls' if sys.platform == "windows" else "clear")
+    os.system("cls" if sys.platform == "windows" else "clear")
 
 
 def validate_args(parser, args):

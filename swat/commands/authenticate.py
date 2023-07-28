@@ -1,5 +1,4 @@
 
-import argparse
 import pickle
 
 from google.auth.transport.requests import Request
@@ -9,30 +8,31 @@ from swat.commands.base_command import BaseCommand
 
 
 class Command(BaseCommand):
+    """Authenticate against a Google Workspace account."""
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.parser = argparse.ArgumentParser(prog='authenticate',
-                                              description='SWAT authentication.',
-                                              usage='coverage [options]')
 
     def execute(self) -> None:
         """Authenticate with Google Workspace."""
-        self.logger.info(f"Authenticating with Google Workspace using scopes: {self.config['google']['scopes']}")
+        self.logger.info(f"Authenticating with Google Workspace using scopes: {self.obj.config['google']['scopes']}")
 
         creds = None
-        if self.token.exists():
-            self.logger.info(f"Loading token file: {self.token}")
-            creds = pickle.loads(self.token.read_bytes())
+        if self.obj.token_path.exists():
+            self.logger.info(f"Loading token file: {self.obj.token_path}")
+            creds = pickle.loads(self.obj.token_path.read_bytes())
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
                 return creds
         else:
-            self.logger.info(f"Token file created: {self.token}")
+            self.logger.info(f"Token file created: {self.obj.token_path}")
         if not creds:
-            assert self.credentials.exists(), self.logger.error(f"Missing credentials file: {self.credentials}")
-            flow = InstalledAppFlow.from_client_secrets_file(str(self.credentials), self.config['google']['scopes'])
+            assert self.obj.cred_path.exists(), self.logger.error(f"Missing credentials file: {self.obj.cred_path}")
+            flow = InstalledAppFlow.from_client_secrets_file(
+                str(self.obj.cred_path), self.obj.config['google']['scopes'])
             creds = flow.run_local_server(port=0)
 
-        self.token.write_bytes(pickle.dumps(creds))
+        self.obj.token_path.write_bytes(pickle.dumps(creds))
+        self.obj.creds = creds
 
         return creds

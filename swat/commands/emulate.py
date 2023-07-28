@@ -3,6 +3,7 @@ import importlib
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 
 from swat.commands.base_command import BaseCommand
 from swat.emulations.base_emulation import BaseEmulation
@@ -18,6 +19,8 @@ class AttackData:
 
 
 class Command(BaseCommand):
+    """Execute attack emulations."""
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.emulation_command = None
@@ -30,6 +33,11 @@ class Command(BaseCommand):
             else:
                 emulation_command_class = self.load_emulation_command_class(self.emulation_name)
                 self.emulation_command = emulation_command_class(args=self.emulation_args, **kwargs)
+
+    @classmethod
+    def custom_help(cls) -> str:
+        """Return the help message for the command."""
+        return f"Execute attack Emulations [{'|'.join(cls.get_emulate_commands())}]"
 
     @staticmethod
     def get_dotted_command_path(command_name: str) -> str:
@@ -46,19 +54,20 @@ class Command(BaseCommand):
                     not c.parent.name == "emulations"]
         return commands
 
-    def load_emulation_command_class(self, name: str) -> type[BaseEmulation] | None:
+    @classmethod
+    def load_emulation_command_class(cls, name: str) -> Optional[type[BaseEmulation]]:
         # Dynamically import the command module
         try:
-            dotted_command = self.get_dotted_command_path(name)
+            dotted_command = cls.get_dotted_command_path(name)
             command_module = importlib.import_module(f"swat.emulations.{dotted_command}")
             command_class = getattr(command_module, "Emulation")
         except (ImportError, AttributeError) as e:
-            print(f"Error: Command '{self.emulation_name}' not found.")
+            print(f"Error: Command '{name}' not found.")
             return
 
         # Check if the command class is a subclass of BaseCommand
         if not issubclass(command_class, BaseEmulation):
-            print(f"Error: Command '{self.emulation_command}' is not a valid command.")
+            print(f"Error: Command '{name}' is not a valid command.")
             return
 
         return command_class
