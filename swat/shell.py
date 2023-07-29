@@ -112,7 +112,7 @@ class SWATShell(cmd.Cmd):
                             command_class = EmulateCommand.load_emulation_command_class(emulation)
                         except AssertionError as e:
                             raise AssertionError(f"Emulation '{emulation}': {e}.")
-                        print(f"{command_class.help()}")
+                        print(f"[{command_class.parse_attack_from_class()}]\n{command_class.help()}")
                     else:
                         print(f"Unrecognized emulation: {emulation}, options: "
                               f"{'|'.join(EmulateCommand.get_emulate_commands())}\n")

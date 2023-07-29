@@ -1,7 +1,6 @@
 
 import importlib
 import os
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
@@ -9,13 +8,6 @@ from swat.commands.base_command import BaseCommand
 from swat.emulations.base_emulation import BaseEmulation
 
 EMULATIONS_DIR = Path(__file__).parent.parent.absolute() / 'emulations'
-
-
-@dataclass
-class AttackData:
-    """Dataclass for ATT&CK Emulation"""
-    tactic: str
-    technique:  str
 
 
 class Command(BaseCommand):
@@ -74,7 +66,7 @@ class Command(BaseCommand):
 
     def execute(self) -> None:
         if not self.emulation_command:
-            self.logger.info(f"Available commands: " + '\n'.join(self.get_emulate_commands()))
+            self.logger.info(f"Available commands: " + '|'.join(self.get_emulate_commands()))
         else:
             self.logger.info(f"Executing command: {self.emulation_name}")
             self.emulation_command.execute()
