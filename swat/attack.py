@@ -1,3 +1,4 @@
+
 import gzip
 import json
 from functools import lru_cache
@@ -31,7 +32,7 @@ def load_attack_data() -> dict:
 
 
 @lru_cache(maxsize=128)
-def lookup_technique_by_id(technique_id) -> Optional[str]:
+def lookup_technique_by_id(technique_id: str) -> Optional[dict]:
     """Look up a technique by ID in ATT&CK enterprise data."""
     data = load_attack_data()
     for item in data["objects"]:

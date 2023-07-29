@@ -10,6 +10,7 @@ from . import utils
 from .base import SWAT
 from .commands.base_command import BaseCommand
 from .commands.emulate import Command as EmulateCommand
+from .misc import CustomHelpFormatter
 from .utils import clear_terminal
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
@@ -103,23 +104,23 @@ class SWATShell(cmd.Cmd):
                 #   3. docstring defined in the command class
                 #   4. default missing help message
 
+                arg, *remaining = arg.split()
+
                 # custom handle nested `emulate` commands
                 if arg.startswith('emulate') and len(arg.split()) > 1:
-                    arg, *remaining = arg.split()
                     emulation = remaining[0] if remaining else None
                     if emulation in EmulateCommand.get_emulate_commands():
                         try:
-                            command_class = EmulateCommand.load_emulation_command_class(emulation)
+                            command_class = EmulateCommand.load_emulation_class(emulation)
                         except AssertionError as e:
                             raise AssertionError(f"Emulation '{emulation}': {e}.")
-                        print(f"[{command_class.parse_attack_from_class()}]\n{command_class.help()}")
+                        print(f"[{command_class.get_attack()}]\n{command_class.help()}")
                     else:
                         print(f"Unrecognized emulation: {emulation}, options: "
                               f"{'|'.join(EmulateCommand.get_emulate_commands())}\n")
 
                 elif arg in commands:
                     command_class = self.load_command(arg)
-
                     custom_help = getattr(command_class, "custom_help", None)
                     try:
                         custom = command_class.custom_help() if custom_help else None
@@ -131,8 +132,15 @@ class SWATShell(cmd.Cmd):
                     if custom:
                         print(f"{custom}\n")
                     elif parser:
-                        parser.print_help()
-                        print()
+                        subparsers = utils.load_subparsers(parser)
+                        if remaining and remaining[0] in subparsers:
+                            subparser = subparsers[remaining[0]]
+                            subparser.formatter_class = CustomHelpFormatter
+                            subparser.print_help()
+                            print()
+                        else:
+                            parser.print_help()
+                            print()
                     elif command_class.__doc__ is not None:
                         print(f"{command_class.__doc__}\n")
                     else:

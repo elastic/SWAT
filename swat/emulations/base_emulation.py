@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from functools import cache
 from typing import Optional
 
+from ..attack import lookup_technique_by_id
 from ..base import SWAT
 from ..misc import get_custom_argparse_formatter, validate_args
 
@@ -14,9 +15,35 @@ class AttackData:
     """Dataclass for ATT&CK Emulation"""
     tactic: str
     technique: list[str]
+    _emulation_name: str
 
     def __str__(self) -> str:
         return f"{self.tactic}: {', '.join(self.technique)}"
+
+    def _raw_technique_details(self) -> dict:
+        """Get technique details from ATT&CK."""
+        return {t: lookup_technique_by_id(t) for t in self.technique}
+
+    def technique_details(self) -> dict:
+        """Print technique details."""
+        all_details = {}
+
+        raw = self._raw_technique_details()
+        for technique, details in raw.items():
+            if not details:
+                raise ValueError(f"Technique {technique} not found in ATT&CK data.")
+            else:
+                data = {
+                    'id': technique,
+                    'tactic': self.tactic,
+                    'name': details.get('name'),
+                    'description': details['description'].split('\n\n')[0].strip(),
+                    'reference': details['external_references'][0].get('url'),
+                    'emulation': self._emulation_name
+                }
+                all_details[technique] = data
+
+        return all_details
 
 
 class BaseEmulation:
@@ -27,7 +54,7 @@ class BaseEmulation:
     def __init__(self, args: list, obj: SWAT, **extra) -> None:
         self.obj = obj
         self.logger = logging.getLogger(__name__)
-        self.attack_data = self.parse_attack_from_class()
+        self.attack_data = self.get_attack()
 
         assert self.parser, "'parser' must be implemented in each emulation command class"
         self.args = validate_args(self.parser, args)
@@ -38,11 +65,11 @@ class BaseEmulation:
 
     @classmethod
     @cache
-    def parse_attack_from_class(cls) -> AttackData:
+    def get_attack(cls) -> AttackData:
         """Parse tactic and technique from path."""
-        _, _, tactic, _ = cls.__module__.split('.')
+        _, _, tactic, emulation_name = cls.__module__.split('.')
         techniques = [t.upper() for t in cls.techniques]
-        return AttackData(tactic=tactic, technique=techniques)
+        return AttackData(tactic=tactic, technique=techniques, _emulation_name=emulation_name)
 
     def exec_str(self, description: str) -> str:
         """Return standard execution log string."""

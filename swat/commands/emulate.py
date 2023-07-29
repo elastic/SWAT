@@ -23,7 +23,7 @@ class Command(BaseCommand):
             if self.emulation_name not in self.get_emulate_commands():
                 self.logger.info(f"Unknown emulation command: {self.emulation_name}")
             else:
-                emulation_command_class = self.load_emulation_command_class(self.emulation_name)
+                emulation_command_class = self.load_emulation_class(self.emulation_name)
                 self.emulation_command = emulation_command_class(args=self.emulation_args, **kwargs)
 
     @classmethod
@@ -47,7 +47,7 @@ class Command(BaseCommand):
         return commands
 
     @classmethod
-    def load_emulation_command_class(cls, name: str) -> Optional[type[BaseEmulation]]:
+    def load_emulation_class(cls, name: str) -> Optional[type[BaseEmulation]]:
         # Dynamically import the command module
         try:
             dotted_command = cls.get_dotted_command_path(name)
@@ -63,6 +63,11 @@ class Command(BaseCommand):
             return
 
         return command_class
+
+    @classmethod
+    def load_all_emulation_classes(cls) -> list[type[BaseEmulation]]:
+        """Return a list of all available command classes."""
+        return [cls.load_emulation_class(c) for c in cls.get_emulate_commands()]
 
     def execute(self) -> None:
         if not self.emulation_command:
