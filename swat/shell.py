@@ -109,7 +109,7 @@ class SWATShell(cmd.Cmd):
                 # custom handle nested `emulate` commands
                 # Note: if there are subparsers (and subcommands) in emulations, support will need to be added to
                 #   render those consistently, similar to below, where it is implemented for regular commands
-                if arg.startswith('emulate') and len(arg.split()) > 1:
+                if arg.startswith('emulate') and len(remaining) > 0:
                     emulation = remaining[0] if remaining else None
                     if emulation in EmulateCommand.get_emulate_commands():
                         try:
@@ -158,10 +158,14 @@ class SWATShell(cmd.Cmd):
             print(f"{self.doc_leader}\n")
             self.print_topics(self.doc_header, all_cmds, 15, 80)
 
+    def emptyline(self) -> None:
+        """Do nothing on empty line to replicate activity of non-do_ commands."""
+        pass
 
     def precmd(self, line: str) -> str:
         """Handle pre-command processing."""
-        self._command_name, *args = line.split()
+        line = line.strip()
+        self._command_name, *args = line.split() if line else (None,)
 
         # Create a new Namespace object containing the credentials and command arguments
         self._new_args = dict(command=self._command_name, args=args)
@@ -170,7 +174,7 @@ class SWATShell(cmd.Cmd):
 
     def default(self, line: str) -> any:
         """Handle commands that are not recognized."""
-        command_class = self.load_command(self._command_name)
+        command_class = self.load_command(self._command_name) if self._command_name else None
         if not command_class:
             return
 
@@ -187,7 +191,7 @@ class SWATShell(cmd.Cmd):
             logging.error(f"Error: {e}")
 
     @staticmethod
-    def do_clear(self, arg: str) -> None:
+    def do_clear(arg: str) -> None:
         """Clear the screen."""
         clear_terminal()
 

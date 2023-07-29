@@ -3,7 +3,7 @@ from tabulate import tabulate
 
 from ..commands.base_command import BaseCommand
 from ..commands.emulate import Command as EmulateCommand
-from ..attack import download_attack_data, lookup_technique_by_id
+from ..attack import download_attack_data, load_attack_data
 from ..misc import validate_args
 from ..utils import ROOT_DIR
 
@@ -18,6 +18,8 @@ class Command(BaseCommand):
 
     parser_refresh = subparsers.add_parser('refresh', description="Refresh ATT&CK data", help='Refresh the ATT&CK data')
 
+    parser_version = subparsers.add_parser('version', description="Show ATT&CK version", help='Show ATT&CK version')
+
     parser_view = subparsers.add_parser('view', description="Show ATT&CK coverage for existing emulations",
                                         help='Show coverage details')
     parser_view.add_argument("--tactic", nargs="*", help="Filter coverage to the specified tactics.")
@@ -26,7 +28,9 @@ class Command(BaseCommand):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.parser_refresh.set_defaults(func=self.refresh)
+        self.parser_version.set_defaults(func=self.version)
         self.parser_view.set_defaults(func=self.view)
+
         self.args = validate_args(self.parser, self.args)
         self.emulate_commands = EmulateCommand.load_all_emulation_classes()
 
@@ -45,6 +49,11 @@ class Command(BaseCommand):
     def refresh() -> None:
         """Refresh the ATT&CK data."""
         download_attack_data()
+
+    @staticmethod
+    def version() -> None:
+        """Show the ATT&CK version."""
+        print(f"ATT&CK version: {load_attack_data()['version']}")
 
     def view(self) -> None:
         """View coverage details."""

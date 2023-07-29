@@ -22,5 +22,5 @@ def validate_args(parser: argparse.ArgumentParser, args: list[str]):
         if unknown:
             raise ValueError(f"Unknown arguments {unknown}")
     except SystemExit:
-        raise ValueError("argparse error")
+        raise ValueError(parser.format_help())
     return parsed_args
