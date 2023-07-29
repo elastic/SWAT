@@ -37,7 +37,7 @@ class AttackData:
                     'id': technique,
                     'tactic': self.tactic,
                     'name': details.get('name'),
-                    'description': details['description'].split('\n\n')[0].strip(),
+                    'description': details['description'].split('.')[0].strip(),
                     'reference': details['external_references'][0].get('url'),
                     'emulation': self._emulation_name
                 }
