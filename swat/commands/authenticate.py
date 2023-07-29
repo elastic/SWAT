@@ -12,8 +12,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from swat.commands.base_command import BaseCommand
 from swat.utils import (ROOT_DIR, validate_args)
 
-DEFAULT_TOKEN_FILE = ROOT_DIR / "token.pickle"
-DEFAULT_CRED_FILE = ROOT_DIR / "credentials.json"
 
 class Command(BaseCommand):
     def __init__(self, **kwargs) -> None:
