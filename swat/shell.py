@@ -107,6 +107,8 @@ class SWATShell(cmd.Cmd):
                 arg, *remaining = arg.split()
 
                 # custom handle nested `emulate` commands
+                # Note: if there are subparsers (and subcommands) in emulations, support will need to be added to
+                #   render those consistently, similar to below, where it is implemented for regular commands
                 if arg.startswith('emulate') and len(arg.split()) > 1:
                     emulation = remaining[0] if remaining else None
                     if emulation in EmulateCommand.get_emulate_commands():
