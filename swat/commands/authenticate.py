@@ -1,6 +1,3 @@
-import argparse
-import json
-import os
 import pickle
 from pathlib import Path
 from typing import Optional
@@ -14,42 +11,32 @@ from swat.utils import (ROOT_DIR, validate_args)
 
 
 class Command(BaseCommand):
+    """Authenticate against a Google Workspace account."""
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.parser = argparse.ArgumentParser(prog='authenticate',
-                                            description='SWAT authentication.',
-                                            usage='authenticate [options]')
-        self.parser.add_argument('--use-service-account', action='store_true',
-                                help='Use service account for authentication')
-        self.parser.add_argument('--store-token', action='store_true',
-                                help='Store the access token for future use')
-        self.parser.add_argument("--credentials", default=DEFAULT_CRED_FILE, type=Path,
-                                help="Path to the credentials or service account key file")
-        self.parser.add_argument("--token", default=DEFAULT_TOKEN_FILE, type=Path,
-                                help="Path to the token file")
-        self.args = validate_args(self.parser, kwargs.get('args'))
 
-        # Check if environment variables exist for credentials and token files
-        self.credentials_file = Path(os.environ.get("SWAT_CREDENTIALS", self.args.credentials if self.args else DEFAULT_CRED_FILE))
-        self.token_file = Path(os.environ.get("SWAT_TOKEN", self.args.token if self.args else DEFAULT_TOKEN_FILE))
-
-
-    def _authenticate_oauth(self) -> Optional[Credentials]:
-        """Authenticate with Google Workspace using OAuth2.0."""
-        self._check_file_exists(self.credentials_file, f"Missing OAuth2.0 credentials file: {self.credentials_file}")
+    def execute(self) -> None:
+        """Authenticate with Google Workspace."""
+        self.logger.info(f"Authenticating with Google Workspace using scopes: {self.obj.config['google']['scopes']}")
 
         creds = None
-        if self.token_file.exists():
-            creds = pickle.loads(self.token_file.read_bytes())
+        if self.obj.token_path.exists():
+            self.logger.info(f"Loading token file: {self.obj.token_path}")
+            creds = pickle.loads(self.obj.token_path.read_bytes())
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
                 return creds
+        else:
+            self.logger.info(f"Token file created: {self.obj.token_path}")
+        if not creds:
+            assert self.obj.cred_path.exists(), self.logger.error(f"Missing credentials file: {self.obj.cred_path}")
+            flow = InstalledAppFlow.from_client_secrets_file(
+                str(self.obj.cred_path), self.obj.config['google']['scopes'])
+            creds = flow.run_local_server(port=0)
 
-        flow = InstalledAppFlow.from_client_secrets_file(str(self.credentials_file), self.config['google']['scopes'])
-        creds = flow.run_local_server(port=0)
-
-        if self.args.store_token:
-            self.token_file.write_bytes(pickle.dumps(creds))
+        self.obj.token_path.write_bytes(pickle.dumps(creds))
+        self.obj.creds = creds
 
         return creds
 

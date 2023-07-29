@@ -1,25 +1,26 @@
 
-import argparse
-
 import pandas as pd
 
-from swat.commands.base_command import BaseCommand
-from swat.utils import (ROOT_DIR, download_attack_data, lookup_technique_by_id,
-                        validate_args)
+from ..commands.base_command import BaseCommand
+from ..utils import ROOT_DIR
+from ..attack import download_attack_data, lookup_technique_by_id
+from ..misc import validate_args
 
 EMULATIONS_DIR = ROOT_DIR / 'swat' / 'emulations'
 DATAFRAME_COLS = ['id', 'tactic', 'name', 'reference', 'description', 'emulation']
 
 
 class Command(BaseCommand):
+
+    parser = BaseCommand.load_parser(prog='coverage',
+                                     description='SWAT MITRE ATT&CK coverage details.')
+    parser.add_argument("--tactic", type=str, help="Tactic to list techniques for.")
+    parser.add_argument("--all", action="store_true", help="List all tactics and techniques")
+    parser.add_argument("--refresh", action="store_true", help="Refresh the ATT&CK data")
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.parser = argparse.ArgumentParser(prog='coverage',
-                                              description='SWAT MITRE ATT&CK coverage details.',
-                                              usage='coverage [options]')
-        self.parser.add_argument("--tactic", type=str, help="Tactic to list techniques for.")
-        self.parser.add_argument("--all", action="store_true", help="List all tactics and techniques")
-        self.parser.add_argument("--refresh", action="store_true", help="Refresh the ATT&CK data")
+
         self.args = validate_args(self.parser, self.args)
         self.tactics = self.get_tactics()
         self.coverage = []

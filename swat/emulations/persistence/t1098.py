@@ -5,11 +5,12 @@ from swat.emulations.base_emulation import BaseEmulation
 
 
 class Emulation(BaseEmulation):
+
+    parser = BaseEmulation.load_parser(prog='T1098',
+                                       description='Account Manipulation')
+
     def __init__(self, **kwargs) -> None:
-        self.parser = argparse.ArgumentParser(prog='T1098',
-                                              description='Account Manipulation',
-                                              usage='T1098 [options]')
-        super().__init__(parser=self.parser, **kwargs)
+        super().__init__(**kwargs)
 
     def execute(self) -> None:
         self.logger.info(self.exec_str(self.parser.description))
