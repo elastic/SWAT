@@ -8,14 +8,13 @@ from typing import Optional, Type, TypeVar
 
 from . import utils
 from .base import SWAT
+from .commands.auth import get_default_token_file, get_default_cred_file
 from .commands.base_command import BaseCommand
 from .commands.emulate import Command as EmulateCommand
 from .utils import clear_terminal
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 COMMANDS_DIR = ROOT_DIR / "swat" / "commands"
-DEFAULT_TOKEN_FILE = ROOT_DIR / "token.pickle"
-DEFAULT_CRED_FILE = ROOT_DIR / "credentials.json"
 CONFIG: dict = utils.load_etc_file("config.yaml")
 
 
@@ -46,8 +45,10 @@ class SWATShell(cmd.Cmd):
             logging.info("Logging in debug mode.")
 
         self.args = args
+        cred_path = args.credentials if hasattr(args, 'credentials') and args.credentials else get_default_cred_file()
+        token_path = args.token if hasattr(args, 'token') and args.token else get_default_token_file()
 
-        self.obj = SWAT(CONFIG, args.credentials, args.token)
+        self.obj = SWAT(CONFIG, cred_path, token_path)
 
         self._command_name = None
         self._new_args = None
