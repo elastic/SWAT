@@ -12,7 +12,7 @@ from swat.utils import ETC_DIR
 ATTACK_PATH = ETC_DIR / "enterprise-attack.json.gz"
 
 
-def download_attack_data(save:bool = True) -> (Optional[dict], Optional[bytes]):
+def download_attack_data(save: bool = True) -> (Optional[dict], Optional[bytes]):
     """Refresh ATT&CK data from Mitre."""
 
     def get_version_from_tag(name, pattern='att&ck-v'):
