@@ -16,6 +16,7 @@ class AttackData:
     tactic: str
     technique: list[str]
     _emulation_name: str
+    _emulation_description: str
 
     def __str__(self) -> str:
         return f"{self.tactic}: {', '.join(self.technique)}"
@@ -38,8 +39,8 @@ class AttackData:
                     'tactic': self.tactic,
                     'name': details.get('name'),
                     'description': details['description'].split('.')[0].strip(),
-                    'reference': details['external_references'][0].get('url'),
-                    'emulation': self._emulation_name
+                    'emulation': self._emulation_name,
+                    'emulation_description': self._emulation_description
                 }
                 all_details[technique] = data
 
@@ -69,7 +70,8 @@ class BaseEmulation:
         """Parse tactic and technique from path."""
         _, _, tactic, emulation_name = cls.__module__.split('.')
         techniques = [t.upper() for t in cls.techniques]
-        return AttackData(tactic=tactic, technique=techniques, _emulation_name=emulation_name)
+        return AttackData(tactic=tactic, technique=techniques, _emulation_name=emulation_name,
+                          _emulation_description=cls.parser.description)
 
     def exec_str(self, description: str) -> str:
         """Return standard execution log string."""
