@@ -1,3 +1,4 @@
+
 import argparse
 
 
@@ -10,16 +11,16 @@ class CustomHelpFormatter(argparse.HelpFormatter):
 
 
 def get_custom_argparse_formatter(*args, **kwargs) -> argparse.ArgumentParser:
-    assert "description" in kwargs and "prog" in kwargs, "Must provide 'description' and 'prog' arguments."
+    assert "description" in kwargs, "Must provide 'description' argument."
     return argparse.ArgumentParser(formatter_class=CustomHelpFormatter, add_help=False, *args, **kwargs)
 
 
-def validate_args(parser, args):
+def validate_args(parser: argparse.ArgumentParser, args: list[str]):
     """Parse arguments."""
     try:
         parsed_args, unknown = parser.parse_known_args(args)
         if unknown:
             raise ValueError(f"Unknown arguments {unknown}")
     except SystemExit:
-        return None
+        raise ValueError(parser.format_help())
     return parsed_args
