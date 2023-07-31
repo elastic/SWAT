@@ -1,5 +1,7 @@
 import argparse
 
+import yaml
+
 
 class CustomHelpFormatter(argparse.HelpFormatter):
     """Override the default help formatter to exclude usage."""
@@ -23,3 +25,8 @@ def validate_args(parser, args):
     except SystemExit:
         return None
     return parsed_args
+
+
+def default_config():
+    with open('swat/etc/config.yaml', 'r') as file:
+        return yaml.safe_load(file)

@@ -1,16 +1,10 @@
-from typing import Dict, Optional, Any
+from typing import Dict, Optional, Any, List
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from google.oauth2.credentials import Credentials
 
-from . import utils
-import yaml
-
-
-def default_config():
-    with open('swat/etc/config.yaml', 'r') as file:
-        return yaml.safe_load(file)
+from .misc import default_config
 
 
 @dataclass
@@ -20,22 +14,27 @@ class SWAT:
     @dataclass
     class CredStore:
         """Credentials store object."""
-        creds: Dict[str, Any] = field(default_factory=dict)  # Dict to hold the credentials
 
-        def add_creds(self, key, value):
+        cred_store: Dict[str, Any] = field(default_factory=dict)
+
+        def add_creds(self, key: str, value: Any) -> None:
             """Add a credential to the store."""
-            self.creds[key] = value
+            self.cred_store[key] = value
 
-        def remove_creds(self, key):
+        def remove_creds(self, key: str) -> bool:
             """Remove credentials from the store."""
-            if key in self.creds:
-                del self.creds[key]
+            if key in self.cred_store:
+                del self.cred_store[key]
                 return True
             return False
 
-        def list_creds(self):
+        def list_creds(self) -> List[str]:
             """List all stored credentials."""
-            return list(self.creds.keys())
+            return list(self.cred_store.keys())
+
+        def get_creds(self, key: str) -> Optional[Any]:
+            """Get specific credentials."""
+            return self.cred_store.get(key, None)
 
     config: dict
     cred_path: Path
@@ -43,4 +42,3 @@ class SWAT:
     creds: Optional[Credentials] = field(default=None)
     cred_store: CredStore = field(default_factory=CredStore)
     CONFIG: Dict = field(default_factory=default_config)
-

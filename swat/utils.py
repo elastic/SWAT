@@ -22,6 +22,12 @@ def load_etc_file(filename: str) -> Union[str, dict]:
     elif path.suffix in (".yaml", ".yml"):
         return yaml.safe_load(contents)
 
+def check_file_exists(file: Path, error_message: str) -> None:
+    """Check if the given file exists, raise an error if it does not."""
+    if not file.exists():
+        raise FileNotFoundError(error_message)
+    if file.is_dir():
+        raise IsADirectoryError(error_message)
 
 def clear_terminal() -> None:
     """Clear the terminal."""
