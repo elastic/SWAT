@@ -41,4 +41,3 @@ class SWAT:
     token_path: Path
     creds: Optional[Credentials] = field(default=None)
     cred_store: CredStore = field(default_factory=CredStore)
-    CONFIG: Dict = field(default_factory=default_config)

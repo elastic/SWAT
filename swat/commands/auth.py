@@ -96,8 +96,8 @@ class Command(BaseCommand):
         self.credentials_file = Path(os.environ.get("SWAT_CREDENTIALS", self.args.credentials if self.args.credentials else DEFAULT_CRED_FILE))
         self.token_file = Path(os.environ.get("SWAT_TOKEN", self.args.token if self.args.token else DEFAULT_TOKEN_FILE))
 
-        if self.obj.CONFIG['google']['scopes'] is not None:
-            self.obj.CONFIG['google']['scopes'] = self.obj.CONFIG['google']['scopes']
+        if self.obj.config['google']['scopes'] is not None:
+            self.obj.config['google']['scopes'] = self.obj.config['google']['scopes']
 
     def authenticate_oauth(self, credentials_path: Optional[Path] = None, credentials_key: Optional[str] = None) -> Optional[Credentials]:
         """Authenticate with Google Workspace using OAuth2.0."""
@@ -181,13 +181,13 @@ class Command(BaseCommand):
                 cred_keys = self.obj.cred_store.list_creds()
                 self.logger.info(f"Stored credentials: {', '.join(cred_keys)}")
             elif self.args.add_scope:
-                    self.obj.CONFIG['google']['scopes'].append(self.args.add_scope)
+                    self.obj.config['google']['scopes'].append(self.args.add_scope)
                     self.logger.info(f"Added scope: {self.args.add_scope}")
             elif self.args.remove_scope:
-                if self.args.remove_scope in self.obj.CONFIG['google']['scopes']:
-                    self.obj.CONFIG['google']['scopes'].remove(self.args.remove_scope)
+                if self.args.remove_scope in self.obj.config['google']['scopes']:
+                    self.obj.config['google']['scopes'].remove(self.args.remove_scope)
                     self.logger.info(f"Removed scope: {self.args.remove_scope}")
                 else:
                     self.logger.info(f"Scope not found: {self.args.remove_scope}")
             elif self.args.list_scopes:
-                self.logger.info(f"OAuth scopes: {', '.join(self.obj.CONFIG['google']['scopes'])}")
+                self.logger.info(f"OAuth scopes: {', '.join(self.obj.config['google']['scopes'])}")
