@@ -96,9 +96,6 @@ class Command(BaseCommand):
         self.credentials_file = Path(os.environ.get("SWAT_CREDENTIALS", self.args.credentials if self.args.credentials else DEFAULT_CRED_FILE))
         self.token_file = Path(os.environ.get("SWAT_TOKEN", self.args.token if self.args.token else DEFAULT_TOKEN_FILE))
 
-        if self.obj.config['google']['scopes'] is not None:
-            self.obj.config['google']['scopes'] = self.obj.config['google']['scopes']
-
     def authenticate_oauth(self, credentials_path: Optional[Path] = None, credentials_key: Optional[str] = None) -> Optional[Credentials]:
         """Authenticate with Google Workspace using OAuth2.0."""
         if credentials_key:
