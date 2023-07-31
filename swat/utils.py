@@ -1,9 +1,11 @@
-import json
+
+import argparse
 import os
 import sys
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 
+import json
 import yaml
 
 
@@ -32,3 +34,11 @@ def check_file_exists(file: Path, error_message: str) -> None:
 def clear_terminal() -> None:
     """Clear the terminal."""
     os.system("cls" if sys.platform == "windows" else "clear")
+
+
+def load_subparsers(parser: argparse.ArgumentParser, dest: str = "subcommand") -> Optional[dict]:
+    """Load subparsers by name if they exist."""
+    for action in parser._actions:
+        if action.dest != dest:
+            continue
+        return action.choices

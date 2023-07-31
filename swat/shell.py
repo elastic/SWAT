@@ -11,6 +11,7 @@ from .base import SWAT
 from .commands.auth import get_default_token_file, get_default_cred_file
 from .commands.base_command import BaseCommand
 from .commands.emulate import Command as EmulateCommand
+from .misc import CustomHelpFormatter
 from .utils import clear_terminal
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
@@ -104,23 +105,25 @@ class SWATShell(cmd.Cmd):
                 #   3. docstring defined in the command class
                 #   4. default missing help message
 
+                arg, *remaining = arg.split()
+
                 # custom handle nested `emulate` commands
-                if arg.startswith('emulate') and len(arg.split()) > 1:
-                    arg, *remaining = arg.split()
+                # Note: if there are subparsers (and subcommands) in emulations, support will need to be added to
+                #   render those consistently, similar to below, where it is implemented for regular commands
+                if arg.startswith('emulate') and len(remaining) > 0:
                     emulation = remaining[0] if remaining else None
                     if emulation in EmulateCommand.get_emulate_commands():
                         try:
-                            command_class = EmulateCommand.load_emulation_command_class(emulation)
+                            command_class = EmulateCommand.load_emulation_class(emulation)
                         except AssertionError as e:
                             raise AssertionError(f"Emulation '{emulation}': {e}.")
-                        print(f"{command_class.help()}")
+                        print(f"[{command_class.get_attack()}]\n{command_class.help()}")
                     else:
                         print(f"Unrecognized emulation: {emulation}, options: "
                               f"{'|'.join(EmulateCommand.get_emulate_commands())}\n")
 
                 elif arg in commands:
                     command_class = self.load_command(arg)
-
                     custom_help = getattr(command_class, "custom_help", None)
                     try:
                         custom = command_class.custom_help() if custom_help else None
@@ -132,8 +135,15 @@ class SWATShell(cmd.Cmd):
                     if custom:
                         print(f"{custom}\n")
                     elif parser:
-                        parser.print_help()
-                        print()
+                        subparsers = utils.load_subparsers(parser)
+                        if remaining and remaining[0] in subparsers:
+                            subparser = subparsers[remaining[0]]
+                            subparser.formatter_class = CustomHelpFormatter
+                            subparser.print_help()
+                            print()
+                        else:
+                            parser.print_help()
+                            print()
                     elif command_class.__doc__ is not None:
                         print(f"{command_class.__doc__}\n")
                     else:
@@ -149,10 +159,14 @@ class SWATShell(cmd.Cmd):
             print(f"{self.doc_leader}\n")
             self.print_topics(self.doc_header, all_cmds, 15, 80)
 
+    def emptyline(self) -> None:
+        """Do nothing on empty line to replicate activity of non-do_ commands."""
+        pass
 
     def precmd(self, line: str) -> str:
         """Handle pre-command processing."""
-        self._command_name, *args = line.split()
+        line = line.strip()
+        self._command_name, *args = line.split() if line else (None,)
 
         # Create a new Namespace object containing the credentials and command arguments
         self._new_args = dict(command=self._command_name, args=args)
@@ -161,7 +175,7 @@ class SWATShell(cmd.Cmd):
 
     def default(self, line: str) -> any:
         """Handle commands that are not recognized."""
-        command_class = self.load_command(self._command_name)
+        command_class = self.load_command(self._command_name) if self._command_name else None
         if not command_class:
             return
 
@@ -178,7 +192,7 @@ class SWATShell(cmd.Cmd):
             logging.error(f"Error: {e}")
 
     @staticmethod
-    def do_clear(self, arg: str) -> None:
+    def do_clear(arg: str) -> None:
         """Clear the screen."""
         clear_terminal()
 
