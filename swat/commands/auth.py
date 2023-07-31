@@ -1,22 +1,4 @@
-import argparse
-import json
-import os
-import pickle
-from pathlib import Path
-from typing import Optional
 
-from google.auth.transport.requests import Request
-from google.oauth2.service_account import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-
-from ..commands.base_command import BaseCommand
-from ..utils import ROOT_DIR, check_file_exists
-from ..misc import validate_args
-
-DEFAULT_TOKEN_FILE = ROOT_DIR / "token.pickle"
-DEFAULT_CRED_FILE = ROOT_DIR / "credentials.json"
-
-import argparse
 import json
 import os
 import pickle
@@ -100,7 +82,7 @@ class Command(BaseCommand):
         """Authenticate with Google Workspace using OAuth2.0."""
         if credentials_key:
             self.logger.info(f"Using stored credentials with key: {credentials_key}")
-            creds = self.obj.cred_store.get_creds(credentials_key)
+            creds = self.obj.get_cred(credentials_key)
             if creds:
                 return creds
 
@@ -129,7 +111,7 @@ class Command(BaseCommand):
         """Authenticate with Google Workspace using a service account."""
         if credentials_key:
             self.logger.info(f"Using stored service account credentials with key: {credentials_key}")
-            creds = self.obj.cred_store.get_creds(credentials_key)
+            creds = self.obj.get_cred(credentials_key)
             if creds:
                 return creds
 
@@ -162,20 +144,20 @@ class Command(BaseCommand):
                         else:
                             creds = OAuthCreds(**creds_json['installed'])
 
-                        self.obj.cred_store.add_creds(key, creds)
+                        self.obj.add_cred(key, creds)
                         self.logger.info(f"Credentials added with key: {key}")
                     except TypeError:
                         self.logger.info(f"Invalid credentials file: {credentials_file}")
                 else:
                     self.logger.info(f"Credentials file not found: {credentials_file}")
             elif self.args.remove_creds:
-                removed = self.obj.cred_store.remove_creds(self.args.remove_creds)
+                removed = self.obj.remove_cred(self.args.remove_creds)
                 if removed:
                     self.logger.info(f"Removed credentials with key: {self.args.remove_creds}")
                 else:
                     self.logger.info(f"No credentials found with key: {self.args.remove_creds}")
             elif self.args.list_creds:
-                cred_keys = self.obj.cred_store.list_creds()
+                cred_keys = self.obj.list_creds()
                 self.logger.info(f"Stored credentials: {', '.join(cred_keys)}")
             elif self.args.add_scope:
                     self.obj.config['google']['scopes'].append(self.args.add_scope)
