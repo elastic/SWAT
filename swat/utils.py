@@ -13,6 +13,12 @@ ROOT_DIR = Path(__file__).parent.parent.absolute()
 ETC_DIR = ROOT_DIR / "swat" / "etc"
 
 
+class PathlibEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Path):
+            return str(obj)
+
+
 def load_etc_file(filename: str) -> Union[str, dict]:
     """Load a  file from the etc directory."""
     path = ETC_DIR / filename
@@ -24,6 +30,12 @@ def load_etc_file(filename: str) -> Union[str, dict]:
     elif path.suffix in (".yaml", ".yml"):
         return yaml.safe_load(contents)
 
+def check_file_exists(file: Path, error_message: str) -> None:
+    """Check if the given file exists, raise an error if it does not."""
+    if not file.exists():
+        raise FileNotFoundError(f"{error_message}: {file}")
+    if file.is_dir():
+        raise IsADirectoryError(f"{error_message}: {file}")
 
 def clear_terminal() -> None:
     """Clear the terminal."""

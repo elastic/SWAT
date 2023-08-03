@@ -1,5 +1,11 @@
 
 import argparse
+from pathlib import Path
+
+import yaml
+
+
+DEFAULT_CONFIG = Path(__file__).parent.parent / "etc" / "config.yaml"
 
 
 class CustomHelpFormatter(argparse.HelpFormatter):
@@ -24,3 +30,7 @@ def validate_args(parser: argparse.ArgumentParser, args: list[str]):
     except SystemExit:
         raise ValueError(parser.format_help())
     return parsed_args
+
+
+def default_config():
+    return yaml.safe_load(DEFAULT_CONFIG.read_text())

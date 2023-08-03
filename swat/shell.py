@@ -15,8 +15,6 @@ from .utils import clear_terminal
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 COMMANDS_DIR = ROOT_DIR / "swat" / "commands"
-DEFAULT_TOKEN_FILE = ROOT_DIR / "token.pickle"
-DEFAULT_CRED_FILE = ROOT_DIR / "credentials.json"
 CONFIG: dict = utils.load_etc_file("config.yaml")
 
 
@@ -33,6 +31,8 @@ logo = """
 
 
 T = TypeVar('T', bound=BaseCommand)
+KEY = "\U0001F511"
+USER = "\U0001F464"
 
 
 class SWATShell(cmd.Cmd):
@@ -47,11 +47,12 @@ class SWATShell(cmd.Cmd):
             logging.info("Logging in debug mode.")
 
         self.args = args
-
-        self.obj = SWAT(CONFIG, args.credentials, args.token)
+        self.obj = SWAT(CONFIG)
 
         self._command_name = None
         self._new_args = None
+
+        self.save_on_exit = True
 
         self._registered_commands = self._register_commands()
 
@@ -171,6 +172,12 @@ class SWATShell(cmd.Cmd):
         self._new_args = dict(command=self._command_name, args=args)
         return line
 
+    def postcmd(self, stop: bool, line: str) -> bool:
+        """Handle post-command processing."""
+        key = f"{KEY}" if self.obj.cred_store.store else ""
+        session = f"{USER}" if self.obj.cred_store.has_sessions else ""
+        self.prompt = f"SWAT{key}{session}>"
+        return stop
 
     def default(self, line: str) -> any:
         """Handle commands that are not recognized."""
@@ -194,6 +201,12 @@ class SWATShell(cmd.Cmd):
     def do_clear(arg: str) -> None:
         """Clear the screen."""
         clear_terminal()
+
+    def do_toggle_cred_save(self, arg: str) -> None:
+        """Toggle the saving of the cred store upon exiting the shell."""
+        enabled = not self.save_on_exit
+        self.save_on_exit = enabled
+        logging.info(f"Save on exit enabled: {enabled}")
 
     def do_exit(self, arg: str) -> bool:
         """Exit the shell."""
