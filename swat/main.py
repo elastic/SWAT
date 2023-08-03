@@ -17,7 +17,13 @@ def main():
     configure_logging(CONFIG, level)
 
     # Start the interactive shell
-    SWATShell(args).cmdloop()
+    shell = SWATShell(args)
+
+    try:
+        shell.cmdloop()
+    finally:
+        if shell.save_on_exit:
+            shell.obj.cred_store.save()
 
 
 if __name__ == "__main__":

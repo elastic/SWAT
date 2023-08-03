@@ -65,13 +65,14 @@ venv.bak/
 *.csv
 *.h5
 
-# Tokens
+# Tokens & creds
 *token.json
 *token.pickle
 *.pem
 *credentials.json
 /credentials
 /credentials/*
+*.cred_store.json
 
 # Logging
 logs/*

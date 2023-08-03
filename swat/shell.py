@@ -8,7 +8,6 @@ from typing import Optional, Type, TypeVar
 
 from . import utils
 from .base import SWAT
-from .commands.auth import get_default_token_file, get_default_cred_file
 from .commands.base_command import BaseCommand
 from .commands.emulate import Command as EmulateCommand
 from .misc import CustomHelpFormatter
@@ -32,6 +31,8 @@ logo = """
 
 
 T = TypeVar('T', bound=BaseCommand)
+KEY = "\U0001F511"
+USER = "\U0001F464"
 
 
 class SWATShell(cmd.Cmd):
@@ -46,13 +47,12 @@ class SWATShell(cmd.Cmd):
             logging.info("Logging in debug mode.")
 
         self.args = args
-        cred_path = args.credentials if hasattr(args, 'credentials') and args.credentials else get_default_cred_file()
-        token_path = args.token if hasattr(args, 'token') and args.token else get_default_token_file()
-
-        self.obj = SWAT(CONFIG, cred_path, token_path)
+        self.obj = SWAT(CONFIG)
 
         self._command_name = None
         self._new_args = None
+
+        self.save_on_exit = True
 
         self._registered_commands = self._register_commands()
 
@@ -172,6 +172,12 @@ class SWATShell(cmd.Cmd):
         self._new_args = dict(command=self._command_name, args=args)
         return line
 
+    def postcmd(self, stop: bool, line: str) -> bool:
+        """Handle post-command processing."""
+        key = f"{KEY}" if self.obj.cred_store.store else ""
+        session = f"{USER}" if self.obj.cred_store.has_sessions else ""
+        self.prompt = f"SWAT{key}{session}>"
+        return stop
 
     def default(self, line: str) -> any:
         """Handle commands that are not recognized."""
@@ -195,6 +201,11 @@ class SWATShell(cmd.Cmd):
     def do_clear(arg: str) -> None:
         """Clear the screen."""
         clear_terminal()
+
+    def do_toggle_cred_save(self, arg: str) -> None:
+        enabled = not self.save_on_exit
+        self.save_on_exit = enabled
+        logging.info(f"Save on exit enabled: {enabled}")
 
     def do_exit(self, arg: str) -> bool:
         """Exit the shell."""

@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.service = build('admin', 'reports_v1', credentials=self.obj.creds)
+        self.service = build('admin', 'reports_v1', credentials=self.obj.creds)  # TODO: replace self.obj.creds
         self.duration = kwargs['args'][1]
         self.application = kwargs['args'][0]
 
@@ -21,7 +21,7 @@ class Command(BaseCommand):
         now = pd.Timestamp.now(tz="UTC")
         start_time = (now - pd.to_timedelta(self.duration)).isoformat()
 
-        request = self.service.activities().list(userKey='all', applicationName=self.application, startTime=start_time)
+        request = self.service.activities().list_configs(userKey='all', applicationName=self.application, startTime=start_time)
         activities = []
 
         while request is not None:

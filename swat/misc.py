@@ -1,7 +1,11 @@
 
 import argparse
+from pathlib import Path
 
 import yaml
+
+
+DEFAULT_CONFIG = Path(__file__).parent.parent / "etc" / "config.yaml"
 
 
 class CustomHelpFormatter(argparse.HelpFormatter):
@@ -29,5 +33,4 @@ def validate_args(parser: argparse.ArgumentParser, args: list[str]):
 
 
 def default_config():
-    with open('swat/etc/config.yaml', 'r') as file:
-        return yaml.safe_load(file)
+    return yaml.safe_load(DEFAULT_CONFIG.read_text())
