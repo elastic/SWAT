@@ -203,6 +203,7 @@ class SWATShell(cmd.Cmd):
         clear_terminal()
 
     def do_toggle_cred_save(self, arg: str) -> None:
+        """Toggle the saving of the cred store upon exiting the shell."""
         enabled = not self.save_on_exit
         self.save_on_exit = enabled
         logging.info(f"Save on exit enabled: {enabled}")
