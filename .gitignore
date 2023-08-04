@@ -64,6 +64,7 @@ venv.bak/
 *.pkl
 *.csv
 *.h5
+*.ndjson
 
 # Tokens & creds
 *token.json
