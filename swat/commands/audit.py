@@ -1,17 +1,20 @@
 import argparse
 import logging
-import pandas as pd
 import re
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Sequence, Union
 
-from googleapiclient.errors import HttpError
-from googleapiclient.discovery import build
-from google.oauth2.service_account import Credentials
+import pandas as pd
 from colorama import Fore, Style
+from google.oauth2.service_account import Credentials
+import googleapiclient
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
 from ..commands.base_command import BaseCommand
 from ..misc import get_custom_argparse_formatter, validate_args
 from ..utils import ROOT_DIR
+
 
 class KeyValueAction(argparse.Action):
     def __call__(self,
@@ -67,7 +70,7 @@ class Command(BaseCommand):
     parser.add_argument('application', help="Application name")
     parser.add_argument('duration', help="Duration in format Xs, Xm, Xh or Xd.")
     parser.add_argument('--columns', nargs='+', help="Columns to keep in the output. If not set, will take columns from config.")
-    parser.add_argument('--export', help="Path to export the data")
+    parser.add_argument('--export', action='store_true', default=False, help="Path to export the data")
     parser.add_argument('--export-format', choices=['csv', 'ndjson'], default='csv', help="Export format. Default is csv.")
     parser.add_argument('--filters', nargs='*', action=KeyValueAction, dest='filters', default={}, help='Filters to apply on the data')
     parser.add_argument('--interactive', action='store_true', help="Interactive mode")
@@ -124,12 +127,13 @@ class Command(BaseCommand):
         Raises:
             Warning: If the specified export format is not supported.
         """
+        export_path = ROOT_DIR / f"{self.application}_{self.duration}.{self.args.export_format}"
         if self.args.export_format == 'csv':
-            df.to_csv(self.args.export, index=False)
-            self.logger.info(f"Data exported to {self.args.export} in CSV format.")
+            df.to_csv(export_path, index=False)
+            self.logger.info(f"Data exported to {export_path} in CSV format.")
         elif self.args.export_format == 'ndjson':
-            df.to_json(self.args.export, orient='records', lines=True)
-            self.logger.info(f"Data exported to {self.args.export} in NDJSON format.")
+            df.to_json(export_path, orient='records', lines=True)
+            self.logger.info(f"Data exported to {export_path} in NDJSON format.")
         else:
             self.logger.warning(f"Unsupported export format: {self.args.export_format}. No data was exported.")
 
@@ -215,6 +219,21 @@ class Command(BaseCommand):
 
         return df
 
+    def filter_columns(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Filters the dataframe based on the columns specified in the arguments or in the config file.
+
+        Args:
+            df (pd.DataFrame): The dataframe to be filtered.
+
+        Returns:
+            pd.DataFrame: The filtered dataframe.
+        """
+        columns = self.args.columns or self.obj.config['google']['audit']['columns']
+        modified_columns = [".*" + column + ".*" for column in columns]
+        df = df[[column for column in df.columns for pattern in modified_columns if re.search(pattern, column, re.IGNORECASE)]]
+        return df
+
     def interactive_session(self, df: pd.DataFrame, df_unfiltered: pd.DataFrame) -> None:
         """
         Starts an interactive session that allows the user to select specific columns to display and rows to expand.
@@ -288,6 +307,7 @@ class Command(BaseCommand):
         # If export is set, export the data
         if self.args.export:
             self.export_data(df)
+            return
 
         # If interactive argument is set, start interactive session
         if self.args.interactive:
