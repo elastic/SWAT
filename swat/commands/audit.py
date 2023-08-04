@@ -90,7 +90,7 @@ class Command(BaseCommand):
         super().__init__(**kwargs)
 
         # Check if the session exists in the credential store
-        if self.obj.cred_store.store['default'].session is None:
+        if self.obj.cred_store.store.get("default") is None:
             self.logger.error(f"Please authenticate with 'auth session --default --config' before running this command.")
             return
 
