@@ -19,6 +19,7 @@ class Command(BaseCommand):
 
     parser_session = subparsers.add_parser('session', description="Authenticate with Google Workspace (default oauth)",
                                            help="Authenticate with Google Workspace (default oauth)")
+    parser_session.add_argument('--default', action='store_true', help='Store the credentials as default')
     parser_session.add_argument('--key', help='Name of key to store the creds under')
     parser_session.add_argument('--config', type=Path, help='Path to the credentials config file')
     parser_session.add_argument('--service-account', action='store_true', help='Authenticate a service account')
@@ -59,6 +60,8 @@ class Command(BaseCommand):
                 check_file_exists(self.args.config, f"Missing OAuth2.0 credentials file: {self.args.config}")
                 flow = InstalledAppFlow.from_client_secrets_file(str(self.args.config), self.obj.config['google']['scopes'])
                 session = flow.run_local_server(port=0)
+            if self.args.default:
+                self.obj.cred_store.add('default', config=self.args.config, override=True, session=session)
         else:
             self.logger.info(f"Missing key or credentials file.")
             return None

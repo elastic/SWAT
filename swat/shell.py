@@ -176,7 +176,7 @@ class SWATShell(cmd.Cmd):
         """Handle post-command processing."""
         key = f"{KEY}" if self.obj.cred_store.store else ""
         session = f"{USER}" if self.obj.cred_store.has_sessions else ""
-        self.prompt = f"SWAT{key}{session}>"
+        self.prompt = f"SWAT{key}{session}>" if key or session else "SWAT>"
         return stop
 
     def default(self, line: str) -> any:

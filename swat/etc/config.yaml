@@ -2,6 +2,18 @@ google:
   scopes:
     - https://www.googleapis.com/auth/admin.directory.user
     - https://www.googleapis.com/auth/admin.reports.audit.readonly
+  audit:
+    columns:
+      - type
+      - name
+      - id
+      - date
+      - time
+      - event
+      - description
+      - actor
+      - address
+      - value
 mitre:
   tactics:
     - collection
