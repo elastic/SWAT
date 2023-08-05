@@ -64,19 +64,19 @@ class OAuthCreds(BaseCreds):
         return {'installed': {k: v for k, v in super().to_dict().items() if not k.startswith('_')}}
 
 
-CRED_CONFIG_TYPES = Union[OAuthCreds, ServiceAccountCreds]
+CRED_TYPES = Union[OAuthCreds, ServiceAccountCreds]
 
 
 @dataclass
 class Cred:
 
-    config: Optional[CRED_CONFIG_TYPES]
+    creds: Optional[CRED_TYPES]
     session: Optional[Credentials]
 
     @property
     def client_id(self) -> Optional[str]:
-        if self.config and hasattr(self.config, 'client_id'):
-            return self.config.client_id
+        if self.creds and hasattr(self.creds, 'client_id'):
+            return self.creds.client_id
 
     def refreshed_session(self) -> Optional[Credentials]:
         if self.session and self.session.expired and self.session.refresh_token:
@@ -118,12 +118,12 @@ class CredStore:
         with open(self.path, 'wb') as f:
             pickle.dump(self, f)
 
-    def add(self, key: str, config: Optional[CRED_CONFIG_TYPES] = None, session: Optional[Credentials] = None,
+    def add(self, key: str, creds: Optional[CRED_TYPES] = None, session: Optional[Credentials] = None,
             override: bool = False):
         '''Add a credential to the store.'''
         if key in self.store and not override:
             raise ValueError(f'Value exists for: {key}')
-        cred = Cred(config=config, session=session)
+        cred = Cred(creds=creds, session=session)
         self.store[key] = cred
 
     def remove(self, key: str) -> bool:
@@ -133,32 +133,32 @@ class CredStore:
     def get(self, key: str, validate_type: Optional[Literal['oauth', 'service']] = None,
             missing_error: bool = True) -> Optional[Cred]:
         value = self.store.get(key)
-        config = value.config
-        if validate_type and config:
-            if validate_type == 'oauth' and not isinstance(config, OAuthCreds):
+        creds = value.creds
+        if validate_type and creds:
+            if validate_type == 'oauth' and not isinstance(creds, OAuthCreds):
                 raise ValueError(f'Value for {key} is not OAuthCreds')
-            elif validate_type == 'service' and not isinstance(config, ServiceAccountCreds):
+            elif validate_type == 'service' and not isinstance(creds, ServiceAccountCreds):
                 raise ValueError(f'Value for {key} is not ServiceAccountCreds')
             elif validate_type not in ('oauth', 'service'):
                 raise ValueError(f'Invalid validate_type: {validate_type}, expected "oauth" or "service"')
-        if not config and missing_error:
+        if not creds and missing_error:
             raise ValueError(f'Value not found for: {key} in the cred store')
         return value
 
     def get_by_client_id(self, client_id: str, validate_type: Optional[Literal['oauth', 'service']] = None,
-            missing_error: bool = True) -> Optional[CRED_CONFIG_TYPES]:
+            missing_error: bool = True) -> Optional[CRED_TYPES]:
         '''Get cred by client_id.'''
         for key, value in self.store.items():
             if value.client_id == client_id:
                 return self.get(key, validate_type, missing_error)
 
-    def list_configs(self) -> list[str]:
-        '''Get the list of configs from the store.'''
-        return [f'{k}{f":{v.config.__class__.__name__}" if v.config else ""}' for k, v in self.store.items()]
+    def list_credentials(self) -> list[str]:
+        '''Get the list of creds from the store.'''
+        return [f'{k}{f":{v.creds}" if v.creds else ""}' for k, v in self.store.items()]
 
     def list_sessions(self) -> list[str]:
         '''Get the list of sessions from the store.'''
-        return [f'{k}:{v.session.client_id}' for k, v in self.store.items() if v.session]
+        return [f'{k}:{v.session.__module__}' for k, v in self.store.items() if v.session]
 
 
 @dataclass

@@ -21,7 +21,7 @@ class Command(BaseCommand):
                                            help='Authenticate with Google Workspace (default oauth)')
     parser_session.add_argument('--default', action='store_true', help='Store the credentials as default')
     parser_session.add_argument('--key', help='Name of key to store the creds under')
-    parser_session.add_argument('--config', type=Path, help='Path to the credentials config file')
+    parser_session.add_argument('--creds', type=Path, help='Path to the credentials file')
     parser_session.add_argument('--service-account', action='store_true', help='Authenticate a service account')
 
     parser_list = subparsers.add_parser('list', description='List credential sessions within the cred store',
@@ -45,23 +45,23 @@ class Command(BaseCommand):
                 session = cred.refreshed_session()
             else:
                 if self.args.service_account:
-                    session = Credentials.from_service_acccount_info(cred.config.to_dict())
+                    session = Credentials.from_service_acccount_info(cred.creds.to_dict())
                 else:
-                    flow = InstalledAppFlow.from_client_config(cred.config.to_dict(), self.obj.config['google']['scopes'])
+                    flow = InstalledAppFlow.from_client_config(cred.creds.to_dict(), self.obj.config['google']['scopes'])
                     session = flow.run_local_server(port=0)
                     cred.session = session
-        elif self.args.config:
+        elif self.args.creds:
             if self.args.service_account:
-                check_file_exists(self.args.config, f'Missing service account credentials file')
-                self.logger.info(f'Using service account credentials file: {self.args.config}')
+                check_file_exists(self.args.creds, f'Missing service account credentials file')
+                self.logger.info(f'Using service account credentials file: {self.args.creds}')
                 scopes = self.obj.config['google']['scopes']
-                session = Credentials.from_service_account_file(str(self.args.config), scopes=scopes)
+                session = Credentials.from_service_account_file(str(self.args.creds), scopes=scopes)
             else:
-                check_file_exists(self.args.config, f'Missing OAuth2.0 credentials file: {self.args.config}')
-                flow = InstalledAppFlow.from_client_secrets_file(str(self.args.config), self.obj.config['google']['scopes'])
+                check_file_exists(self.args.creds, f'Missing OAuth2.0 credentials file: {self.args.creds}')
+                flow = InstalledAppFlow.from_client_secrets_file(str(self.args.creds), self.obj.config['google']['scopes'])
                 session = flow.run_local_server(port=0)
             if self.args.default:
-                self.obj.cred_store.add('default', config=self.args.config, override=True, session=session)
+                self.obj.cred_store.add('default', creds=self.args.creds, override=True, session=session)
         else:
             self.logger.info(f'Missing key or credentials file.')
             return None
@@ -71,7 +71,7 @@ class Command(BaseCommand):
 
     def list_sessions(self):
         cred_sessions = self.obj.cred_store.list_sessions()
-        self.logger.info(f'Stored credential sessions: {", ".join(cred_sessions) if cred_sessions else None}')
+        self.logger.info(f'Stored auth sessions: {", ".join(cred_sessions) if cred_sessions else None}')
 
     def execute(self) -> None:
         self.args.func()
