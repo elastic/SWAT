@@ -53,13 +53,13 @@ class Command(BaseCommand):
     @staticmethod
     def version() -> None:
         """Show the ATT&CK version."""
-        print(f"ATT&CK version: {load_attack_data()['version']}")
+        self.logger.info(f"ATT&CK version: {load_attack_data()['version']}")
 
     def view(self) -> None:
         """View coverage details."""
         entries = self.build_table_entries()
         if not entries:
-            print("No results found.")
+            self.logger("No results found.")
         else:
             col_widths = [None, None, None, 50, None, 50]
             print(tabulate(entries, headers="keys", maxcolwidths=col_widths, tablefmt="fancy_grid"))

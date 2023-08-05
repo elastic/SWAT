@@ -95,9 +95,9 @@ class SWATShell(cmd.Cmd):
             if method:
                 # if the do_ method exists, print its docstring
                 if method.__doc__ is not None:
-                    print(f"{method.__doc__}\n")
+                    logging.info(f"{method.__doc__}\n")
                 else:
-                    print(f"{self.nohelp % arg}\n")
+                    logging.info(f"{self.nohelp % arg}\n")
             else:
                 # load commands dynamically and get help based on the following precedence:
                 #   1. custom_help() method defined in the command class
@@ -117,9 +117,9 @@ class SWATShell(cmd.Cmd):
                             command_class = EmulateCommand.load_emulation_class(emulation)
                         except AssertionError as e:
                             raise AssertionError(f"Emulation '{emulation}': {e}.")
-                        print(f"[{command_class.get_attack()}]\n{command_class.help()}")
+                        logging.info(f"[{command_class.get_attack()}]\n{command_class.help()}")
                     else:
-                        print(f"Unrecognized emulation: {emulation}, options: "
+                        logging.info(f"Unrecognized emulation: {emulation}, options: "
                               f"{'|'.join(EmulateCommand.get_emulate_commands())}\n")
 
                 elif arg in commands:
@@ -133,7 +133,7 @@ class SWATShell(cmd.Cmd):
                     parser: argparse.ArgumentParser = getattr(command_class, "parser", None)
 
                     if custom:
-                        print(f"{custom}\n")
+                        logging.info(f"{custom}\n")
                     elif parser:
                         subparsers = utils.load_subparsers(parser)
                         if remaining and remaining[0] in subparsers:
@@ -145,18 +145,18 @@ class SWATShell(cmd.Cmd):
                             parser.print_help()
                             print()
                     elif command_class.__doc__ is not None:
-                        print(f"{command_class.__doc__}\n")
+                        logging.info(f"{command_class.__doc__}\n")
                     else:
-                        print(f"{self.nohelp % arg}\n")
+                        logging.info(f"{self.nohelp % arg}\n")
                 else:
-                    print(f"unrecognized command: {arg}")
-                    print(f"{self.doc_leader}\n")
+                    logging.info(f"unrecognized command: {arg}")
+                    logging.info(f"{self.doc_leader}\n")
                     self.print_topics(self.doc_header, all_cmds, 15, 80)
             return
         else:
             # print a unified, sorted list of do_ and imported commands
             # this drops support for help_* topics
-            print(f"{self.doc_leader}\n")
+            logging.info(f"{self.doc_leader}\n")
             self.print_topics(self.doc_header, all_cmds, 15, 80)
 
     def emptyline(self) -> None:
@@ -170,6 +170,7 @@ class SWATShell(cmd.Cmd):
 
         # Create a new Namespace object containing the credentials and command arguments
         self._new_args = dict(command=self._command_name, args=args)
+        logging.info(f"Command execution: {self._new_args}")
         return line
 
     def postcmd(self, stop: bool, line: str) -> bool:

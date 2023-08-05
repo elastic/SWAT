@@ -54,12 +54,12 @@ class Command(BaseCommand):
             command_module = importlib.import_module(f"swat.emulations.{dotted_command}")
             command_class = getattr(command_module, "Emulation")
         except (ImportError, AttributeError) as e:
-            print(f"Error: Command '{name}' not found.")
+            self.logger.info(f"Error: Command '{name}' not found.")
             return
 
         # Check if the command class is a subclass of BaseCommand
         if not issubclass(command_class, BaseEmulation):
-            print(f"Error: Command '{name}' is not a valid command.")
+            self.logger.info(f"Error: Command '{name}' is not a valid command.")
             return
 
         return command_class
@@ -73,5 +73,5 @@ class Command(BaseCommand):
         if not self.emulation_command:
             self.logger.info(f"Available commands: " + '|'.join(self.get_emulate_commands()))
         else:
-            self.logger.info(f"Executing command: {self.emulation_name}")
+            self.logger.info(f"Executing emulation: {self.emulation_name}")
             self.emulation_command.execute()

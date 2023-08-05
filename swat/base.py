@@ -1,5 +1,6 @@
 
 import dataclasses
+import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Literal, Union
@@ -107,11 +108,11 @@ class CredStore:
     @classmethod
     def from_file(cls, file: Path = DEFAULT_CRED_STORE_FILE) -> Optional['CredStore']:
         if file.exists():
-            print(f"Loaded cred store dump from: {file}")
+            logging.info(f"Loaded cred store dump from: {file}")
             return cls(**json.loads(file.read_text()))
 
     def save(self):
-        print(f"Saved cred store to {self.path}")
+        logging.info(f"Saved cred store to {self.path}")
         self.path.write_text(json.dumps(dataclasses.asdict(self), indent=2, sort_keys=True, cls=PathlibEncoder))
 
     def add(self, key: str, config: Optional[CRED_CONFIG_TYPES] = None, session: Optional[Credentials] = None,
