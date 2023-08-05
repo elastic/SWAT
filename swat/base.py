@@ -158,7 +158,7 @@ class CredStore:
 
     def list_sessions(self) -> list[str]:
         '''Get the list of sessions from the store.'''
-        return [f'{k}:{v.session.__module__}' for k, v in self.store.items() if v.session]
+        return [f'{k}:{v.session.__module__}:{v.session.client_id}' for k, v in self.store.items() if v.session]
 
 
 @dataclass
