@@ -95,6 +95,7 @@ class BaseEmulation:
         '''Return custom parser.'''
         return get_custom_argparse_formatter(*args, **kwargs)
 
+    @classmethod
     def load_emulation_config(self) -> Optional[dict]:
         '''Load YAML config file for emulation.'''
         # Determine the path to the corresponding YAML file
