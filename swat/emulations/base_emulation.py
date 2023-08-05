@@ -3,7 +3,10 @@ import argparse
 import logging
 from dataclasses import dataclass
 from functools import cache
+from pathlib import Path
 from typing import Optional
+
+import yaml
 
 from ..attack import lookup_technique_by_id
 from ..base import SWAT
@@ -58,6 +61,7 @@ class BaseEmulation:
         self.logger = logging.getLogger(__name__)
         emulation_name = '.'.join(self.__module__.split('.')[2:])
         self.elogger = configure_emulation_logger(emulation_name, obj.config)
+        self.econfig = self.load_emulation_config()
         self.attack_data = self.get_attack()
 
         assert self.parser, '"parser" must be implemented in each emulation command class'
@@ -90,3 +94,17 @@ class BaseEmulation:
     def load_parser(cls, *args, **kwargs) -> argparse.ArgumentParser:
         '''Return custom parser.'''
         return get_custom_argparse_formatter(*args, **kwargs)
+
+    @classmethod
+    def load_emulation_config(self) -> Optional[dict]:
+        '''Load YAML config file for emulation.'''
+        # Determine the path to the corresponding YAML file
+        emulation_path = Path(self.__module__.replace('.', '/'))
+        config_file_path = emulation_path.with_suffix('.yaml')
+
+        # Load the YAML file if it exists
+        if config_file_path.exists():
+            return yaml.safe_load(config_file_path.read_text())
+        else:
+            return None
+
