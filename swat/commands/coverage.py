@@ -14,16 +14,16 @@ EMULATIONS_DIR = ROOT_DIR / 'swat' / 'emulations'
 class Command(BaseCommand):
 
     parser = BaseCommand.load_parser(description='SWAT MITRE ATT&CK coverage details.')
-    subparsers = parser.add_subparsers(dest='subcommand', title="subcommands", required=True)
+    subparsers = parser.add_subparsers(dest='subcommand', title='subcommands', required=True)
 
-    parser_refresh = subparsers.add_parser('refresh', description="Refresh ATT&CK data", help='Refresh the ATT&CK data')
+    parser_refresh = subparsers.add_parser('refresh', description='Refresh ATT&CK data', help='Refresh the ATT&CK data')
 
-    parser_version = subparsers.add_parser('version', description="Show ATT&CK version", help='Show ATT&CK version')
+    parser_version = subparsers.add_parser('version', description='Show ATT&CK version', help='Show ATT&CK version')
 
-    parser_view = subparsers.add_parser('view', description="Show ATT&CK coverage for existing emulations",
+    parser_view = subparsers.add_parser('view', description='Show ATT&CK coverage for existing emulations',
                                         help='Show coverage details')
-    parser_view.add_argument("--tactic", nargs="*", help="Filter coverage to the specified tactics.")
-    parser_view.add_argument("--technique-id", nargs="*", help="Filter coverage to the specified technique IDs.")
+    parser_view.add_argument('--tactic', nargs='*', help='Filter coverage to the specified tactics.')
+    parser_view.add_argument('--technique-id', nargs='*', help='Filter coverage to the specified technique IDs.')
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         self.emulate_commands = EmulateCommand.load_all_emulation_classes()
 
     def build_table_entries(self) -> list[dict]:
-        """Build dict format for table."""
+        '''Build dict format for table.'''
         details = []
         for command in self.emulate_commands:
             details.extend([v for k, v in command.get_attack().technique_details().items()])
@@ -47,23 +47,23 @@ class Command(BaseCommand):
 
     @staticmethod
     def refresh() -> None:
-        """Refresh the ATT&CK data."""
+        '''Refresh the ATT&CK data.'''
         download_attack_data()
 
     @staticmethod
     def version() -> None:
-        """Show the ATT&CK version."""
-        self.logger.info(f"ATT&CK version: {load_attack_data()['version']}")
+        '''Show the ATT&CK version.'''
+        self.logger.info(f'ATT&CK version: {load_attack_data()["version"]}')
 
     def view(self) -> None:
-        """View coverage details."""
+        '''View coverage details.'''
         entries = self.build_table_entries()
         if not entries:
-            self.logger("No results found.")
+            self.logger('No results found.')
         else:
             col_widths = [None, None, None, 50, None, 50]
-            print(tabulate(entries, headers="keys", maxcolwidths=col_widths, tablefmt="fancy_grid"))
+            print(tabulate(entries, headers='keys', maxcolwidths=col_widths, tablefmt='fancy_grid'))
 
     def execute(self) -> None:
-        """Main execution method."""
+        '''Main execution method.'''
         self.args.func()

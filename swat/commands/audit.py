@@ -22,7 +22,7 @@ class KeyValueAction(argparse.Action):
                  namespace: argparse.Namespace,
                  values: Union[str, Sequence[Any]],
                  option_string: Optional[str] = None) -> None:
-        """
+        '''
         The method is called when this action is specified on the command line.
 
         Parameters:
@@ -36,21 +36,21 @@ class KeyValueAction(argparse.Action):
 
         Returns:
         None
-        """
+        '''
         for value in values:
             key, sep, val = value.partition('=')
             if sep != '=':
-                raise argparse.ArgumentError(self, f"invalid filter argument '{value}', expected 'key=value'")
+                raise argparse.ArgumentError(self, f'invalid filter argument "{value}", expected "key=value"')
             setattr(namespace, self.dest, {key: val})
 
 @dataclass
 class Filters:
-    """Dataclass representing a set of filters."""
+    '''Dataclass representing a set of filters.'''
 
     filters: Optional[Dict[str, Any]] = None
 
 class Command(BaseCommand):
-    """
+    '''
     Command class for handling Google Workspace Audit command operations.
 
     Attributes:
@@ -59,25 +59,25 @@ class Command(BaseCommand):
         application (str): The Google Workspace application name for which audit logs are to be fetched.
         filters (Filters): An object of Filters class that holds a dictionary of filter key-value pairs.
         parser (argparse.ArgumentParser): Argument parser object to parse command line arguments.
-    """
+    '''
 
     service: googleapiclient.discovery.Resource
     duration: str
     application: str
     filters: Filters
 
-    parser = get_custom_argparse_formatter(prog="audit", description="Google Workspace Audit")
-    parser.add_argument('application', help="Application name")
-    parser.add_argument('duration', help="Duration in format Xs, Xm, Xh or Xd.")
-    parser.add_argument('--columns', nargs='+', help="Columns to keep in the output. If not set, will take columns from config.")
-    parser.add_argument('--export', action='store_true', default=False, help="Path to export the data")
-    parser.add_argument('--export-format', choices=['csv', 'ndjson'], default='csv', help="Export format. Default is csv.")
+    parser = get_custom_argparse_formatter(prog='audit', description='Google Workspace Audit')
+    parser.add_argument('application', help='Application name')
+    parser.add_argument('duration', help='Duration in format Xs, Xm, Xh or Xd.')
+    parser.add_argument('--columns', nargs='+', help='Columns to keep in the output. If not set, will take columns from config.')
+    parser.add_argument('--export', action='store_true', default=False, help='Path to export the data')
+    parser.add_argument('--export-format', choices=['csv', 'ndjson'], default='csv', help='Export format. Default is csv.')
     parser.add_argument('--filters', nargs='*', action=KeyValueAction, dest='filters', default={}, help='Filters to apply on the data')
-    parser.add_argument('--interactive', action='store_true', help="Interactive mode")
+    parser.add_argument('--interactive', action='store_true', help='Interactive mode')
 
 
     def __init__(self, **kwargs) -> None:
-        """
+        '''
         Initializes a new instance of the Command class.
 
         Parameters:
@@ -86,24 +86,24 @@ class Command(BaseCommand):
         Raises:
             ImportError: If the pandas package is not installed.
             HttpError: If there is an error while building the Google Workspace admin service.
-        """
+        '''
         super().__init__(**kwargs)
 
         # Check if the session exists in the credential store
-        if self.obj.cred_store.store.get("default") is None:
-            self.logger.error(f"Please authenticate with 'auth session --default --config' before running this command.")
+        if self.obj.cred_store.store.get('default') is None:
+            self.logger.error(f'Please authenticate with "auth session --default --config" before running this command.')
             return
 
         try:
             import pandas as pd
         except ImportError:
-            self.logger.error(f"Pandas is not installed. Please install it with 'poetry install -E audit_support'.")
+            self.logger.error(f'Pandas is not installed. Please install it with "poetry install -E audit_support".')
             return
 
         try:
             self.service = build('admin', 'reports_v1', credentials=self.obj.cred_store.store['default'].session)
         except HttpError as err:
-            self.logger.error(f"An error occurred: {err}")
+            self.logger.error(f'An error occurred: {err}')
             return
 
         # Validate and setup arguments
@@ -118,7 +118,7 @@ class Command(BaseCommand):
 
 
     def export_data(self, df: pd.DataFrame) -> None:
-        """
+        '''
         Exports the dataframe to a specified format.
 
         Parameters:
@@ -126,20 +126,20 @@ class Command(BaseCommand):
 
         Raises:
             Warning: If the specified export format is not supported.
-        """
-        export_path = ROOT_DIR / f"{self.application}_{self.duration}.{self.args.export_format}"
+        '''
+        export_path = ROOT_DIR / f'{self.application}_{self.duration}.{self.args.export_format}'
         if self.args.export_format == 'csv':
             df.to_csv(export_path, index=False)
-            self.logger.info(f"Data exported to {export_path} in CSV format.")
+            self.logger.info(f'Data exported to {export_path} in CSV format.')
         elif self.args.export_format == 'ndjson':
             df.to_json(export_path, orient='records', lines=True)
-            self.logger.info(f"Data exported to {export_path} in NDJSON format.")
+            self.logger.info(f'Data exported to {export_path} in NDJSON format.')
         else:
-            self.logger.warning(f"Unsupported export format: {self.args.export_format}. No data was exported.")
+            self.logger.warning(f'Unsupported export format: {self.args.export_format}. No data was exported.')
 
 
     def flatten_json(self, y: dict) -> dict:
-        """
+        '''
         Flattens a nested dictionary and returns a new dictionary with
         flattened structure where the nested keys are joined with underscore '_'.
 
@@ -148,7 +148,7 @@ class Command(BaseCommand):
 
         Returns:
             dict: The flattened dictionary.
-        """
+        '''
         out = {}
 
         def flatten(x, name=''):
@@ -167,7 +167,7 @@ class Command(BaseCommand):
         return out
 
     def flatten_activities(self, activities: list) -> pd.DataFrame:
-        """
+        '''
         Flattens the activities data and converts it into a DataFrame.
 
         Parameters:
@@ -175,7 +175,7 @@ class Command(BaseCommand):
 
         Returns:
             pandas.DataFrame: The DataFrame containing the flattened activities data.
-        """
+        '''
         flattened_data = []
         for activity in activities:
             events = activity.pop('events')
@@ -191,14 +191,14 @@ class Command(BaseCommand):
 
 
     def fetch_data(self) -> pd.DataFrame:
-        """
+        '''
         Fetches the activity data from the Google Workspace Audit service, using the provided start time,
         application name, and user key. The data is returned as a pandas DataFrame.
 
         Returns:
             pandas.DataFrame: The DataFrame containing the fetched activity data.
-        """
-        now = pd.Timestamp.now(tz="UTC")
+        '''
+        now = pd.Timestamp.now(tz='UTC')
         start_time = (now - pd.to_timedelta(self.duration)).isoformat()
         request = self.service.activities().list(userKey='all', applicationName=self.application, startTime=start_time)
         activities = []
@@ -212,7 +212,7 @@ class Command(BaseCommand):
         df = self.flatten_activities(activities)
         if self.args.filters:
             for column, value in self.args.filters.items():
-                if "*" in value:
+                if '*' in value:
                     df = df[df[column].str.contains(value.strip('*'), case=False)]
                 else:
                     df = df[df[column] == value]
@@ -220,7 +220,7 @@ class Command(BaseCommand):
         return df
 
     def filter_columns(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
+        '''
         Filters the dataframe based on the columns specified in the arguments or in the config file.
 
         Args:
@@ -228,14 +228,14 @@ class Command(BaseCommand):
 
         Returns:
             pd.DataFrame: The filtered dataframe.
-        """
+        '''
         columns = self.args.columns or self.obj.config['google']['audit']['columns']
-        modified_columns = [".*" + column + ".*" for column in columns]
+        modified_columns = ['.*' + column + '.*' for column in columns]
         df = df[[column for column in df.columns for pattern in modified_columns if re.search(pattern, column, re.IGNORECASE)]]
         return df
 
     def interactive_session(self, df: pd.DataFrame, df_unfiltered: pd.DataFrame) -> None:
-        """
+        '''
         Starts an interactive session that allows the user to select specific columns to display and rows to expand.
 
         Args:
@@ -244,10 +244,10 @@ class Command(BaseCommand):
 
         Returns:
             None
-        """
+        '''
         # Ask the user which columns to display
-        selected_columns_input = input("Enter the columns to display, separated by commas (see logged available columns): ")
-        selected_columns = [column.strip() for column in selected_columns_input.split(",")]
+        selected_columns_input = input('Enter the columns to display, separated by commas (see logged available columns): ')
+        selected_columns = [column.strip() for column in selected_columns_input.split(',')]
 
         # Keep only the selected columns
         df = df[selected_columns]
@@ -255,7 +255,7 @@ class Command(BaseCommand):
 
         # Keep the session interactive, allow user to expand a row with iloc
         while True:
-            row_number = input("Enter the number of the row you want to expand (or 'q' to quit): ")
+            row_number = input('Enter the number of the row you want to expand (or "q" to quit): ')
             if row_number.lower() == 'q':
                 break
             else:
@@ -265,12 +265,12 @@ class Command(BaseCommand):
                         expanded_row = df_unfiltered.iloc[row_number].T.to_frame()
                         self.show_results(expanded_row)
                     else:
-                        self.logger.warning(f"Row number {row_number} is out of range.")
+                        self.logger.warning(f'Row number {row_number} is out of range.')
                 except ValueError:
-                    self.logger.warning(f"Invalid row number: {row_number}")
+                    self.logger.warning(f'Invalid row number: {row_number}')
 
     def show_results(self, df: pd.DataFrame) -> None:
-        """
+        '''
         Prints the DataFrame to the console in a markdown table format.
 
         Args:
@@ -278,12 +278,12 @@ class Command(BaseCommand):
 
         Returns:
             None
-        """
+        '''
         print(Fore.GREEN + df.to_markdown(headers='keys', tablefmt='fancy_grid') + Fore.RESET)
 
 
     def execute(self) -> None:
-        """
+        '''
         Main execution method of the Command class.
 
         Fetches the data, logs the results, and based on the provided arguments either exports the data,
@@ -291,18 +291,18 @@ class Command(BaseCommand):
 
         Returns:
             None
-        """
+        '''
         df = self.fetch_data()
         df_unfiltered = df.copy()
         if df is None:
-            self.logger.info(f"No results found for {self.application} in the last {self.duration}.")
+            self.logger.info(f'No results found for {self.application} in the last {self.duration}.')
             return
 
         df = self.filter_columns(df)
 
         # Always log the results and available columns
-        self.logger.info(f"Found {len(df)} results.")
-        self.logger.info(f"Available columns: {', '.join(df.columns)}")
+        self.logger.info(f'Found {len(df)} results.')
+        self.logger.info(f'Available columns: {", ".join(df.columns)}')
 
         # If export is set, export the data
         if self.args.export:
