@@ -1,6 +1,7 @@
 
 import gzip
 import json
+import logging
 from functools import lru_cache
 from typing import Optional
 
@@ -30,7 +31,7 @@ def download_attack_data(save: bool = True) -> (Optional[dict], Optional[bytes])
     latest_version = Version.parse(get_version_from_tag(release_name), optional_minor_and_patch=True)
 
     if current_version and current_version >= latest_version:
-        print(f'No versions newer than the current detected: {current_version}')
+        logging.info(f'ATT&CK version: {current_version} is up to date.')
         return None, None
 
     download = f'https://raw.githubusercontent.com/mitre/cti/{release_name}/enterprise-attack/enterprise-attack.json'
@@ -42,7 +43,7 @@ def download_attack_data(save: bool = True) -> (Optional[dict], Optional[bytes])
 
     if save:
         ATTACK_PATH.write_bytes(compressed)
-        print(f'ATT&CK version: {latest_version} saved to: {ATTACK_PATH}')
+        logging.info(f'ATT&CK version: {latest_version} saved to: {ATTACK_PATH}')
 
     return attack_data, compressed
 

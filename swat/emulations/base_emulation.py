@@ -7,6 +7,7 @@ from typing import Optional
 
 from ..attack import lookup_technique_by_id
 from ..base import SWAT
+from ..logger import configure_emulation_logger
 from ..misc import get_custom_argparse_formatter, validate_args
 
 
@@ -55,6 +56,8 @@ class BaseEmulation:
     def __init__(self, args: list, obj: SWAT, **extra) -> None:
         self.obj = obj
         self.logger = logging.getLogger(__name__)
+        emulation_name = ".".join(self.__module__.split(".")[2:])
+        self.elogger = configure_emulation_logger(emulation_name, obj.config)
         self.attack_data = self.get_attack()
 
         assert self.parser, "'parser' must be implemented in each emulation command class"
