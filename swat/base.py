@@ -1,6 +1,7 @@
 
 import dataclasses
 import logging
+import pickle
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Literal, Union
@@ -12,7 +13,7 @@ from google.oauth2.credentials import Credentials
 from .utils import ROOT_DIR, PathlibEncoder
 
 
-DEFAULT_CRED_STORE_FILE = ROOT_DIR / 'swat' / 'etc' / '.cred_store.json'
+DEFAULT_CRED_STORE_FILE = ROOT_DIR / 'swat' / 'etc' / '.cred_store.pkl'
 
 
 @dataclass
@@ -109,11 +110,13 @@ class CredStore:
     def from_file(cls, file: Path = DEFAULT_CRED_STORE_FILE) -> Optional['CredStore']:
         if file.exists():
             logging.info(f'Loaded cred store dump from: {file}')
-            return cls(**json.loads(file.read_text()))
+            with open(file, 'rb') as f:
+                return pickle.load(f)
 
     def save(self):
         logging.info(f'Saved cred store to {self.path}')
-        self.path.write_text(json.dumps(dataclasses.asdict(self), indent=2, sort_keys=True, cls=PathlibEncoder))
+        with open(self.path, 'wb') as f:
+            pickle.dump(self, f)
 
     def add(self, key: str, config: Optional[CRED_CONFIG_TYPES] = None, session: Optional[Credentials] = None,
             override: bool = False):
@@ -155,7 +158,7 @@ class CredStore:
 
     def list_sessions(self) -> list[str]:
         '''Get the list of sessions from the store.'''
-        return [f'{k}:{v.config.__class__.__name__}' for k, v in self.store.items() if v.session]
+        return [f'{k}:{v.session.client_id}' for k, v in self.store.items() if v.session]
 
 
 @dataclass

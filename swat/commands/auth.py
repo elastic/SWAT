@@ -9,7 +9,7 @@ from ..commands.base_command import BaseCommand
 from ..utils import ROOT_DIR, check_file_exists
 from ..misc import validate_args
 
-DEFAULT_TOKEN_FILE = ROOT_DIR / 'token.pickle'
+DEFAULT_TOKEN_FILE = ROOT_DIR / 'token.pkl'
 
 
 class Command(BaseCommand):

@@ -23,9 +23,8 @@ def main():
         shell.cmdloop()
     finally:
         if shell.save_on_exit:
-            pass
-            # TODO: resolve object loading on this
-            # shell.obj.cred_store.save()
+            shell.obj.cred_store.save()
+        print(':: Until Next Time ::')
 
 
 if __name__ == '__main__':

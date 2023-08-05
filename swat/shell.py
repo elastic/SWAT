@@ -52,7 +52,7 @@ class SWATShell(cmd.Cmd):
         self._command_name = None
         self._new_args = None
 
-        self.save_on_exit = True
+        self.save_on_exit = self.obj.config['settings'].get('save_on_exit', False)
 
         self._registered_commands = self._register_commands()
 
@@ -211,5 +211,4 @@ class SWATShell(cmd.Cmd):
 
     def do_exit(self, arg: str) -> bool:
         '''Exit the shell.'''
-        print(':: Until Next Time ::')
         return True
