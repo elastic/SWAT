@@ -26,6 +26,8 @@
 
 SWAT maps closely to the MITRE ATT&CK framework, providing an interactive command-line interface and shell to simulate cyber attacks and evaluate the effectiveness of an organization's security controls. Built with Python, YAML, and GoLang, this tool helps penetration testers, security professionals, and ethical hackers simulate the malicious behavior of adversaries against Google Workspace environments.
 
+https://github.com/elastic/SWAT/assets/99630311/6436071f-2bdd-4d09-917e-b2b6795743c7
+
 ## Features
 
 - Interactive command-line interface and shell
