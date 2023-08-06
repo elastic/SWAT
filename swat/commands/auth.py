@@ -8,6 +8,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from ..commands.base_command import BaseCommand
 from ..utils import ROOT_DIR, check_file_exists
 from ..misc import validate_args
+from ..base import ServiceAccountCreds, OAuthCreds
 
 DEFAULT_TOKEN_FILE = ROOT_DIR / 'token.pkl'
 
@@ -19,11 +20,10 @@ class Command(BaseCommand):
 
     parser_session = subparsers.add_parser('session', description='Authenticate with Google Workspace (default oauth)',
                                            help='Authenticate with Google Workspace (default oauth)')
-    parser_session.add_argument('--default', action='store_true', help='Store the credentials as default')
     parser_session.add_argument('--key', help='Name of key to store the creds under')
     parser_session.add_argument('--creds', type=Path, help='Path to the credentials file')
     parser_session.add_argument('--service-account', action='store_true', help='Authenticate a service account')
-
+    parser_session.add_argument('--store', type=str, help='Add authenticated session to credential store with key')
     parser_list = subparsers.add_parser('list', description='List credential sessions within the cred store',
                                         help='List credential sessions within the cred store')
 
@@ -45,7 +45,7 @@ class Command(BaseCommand):
                 session = cred.refreshed_session()
             else:
                 if self.args.service_account:
-                    session = Credentials.from_service_acccount_info(cred.creds.to_dict())
+                    session = Credentials.from_service_account_info(cred.creds.to_dict())
                 else:
                     flow = InstalledAppFlow.from_client_config(cred.creds.to_dict(), self.obj.config['google']['scopes'])
                     session = flow.run_local_server(port=0)
@@ -60,14 +60,25 @@ class Command(BaseCommand):
                 check_file_exists(self.args.creds, f'Missing OAuth2.0 credentials file: {self.args.creds}')
                 flow = InstalledAppFlow.from_client_secrets_file(str(self.args.creds), self.obj.config['google']['scopes'])
                 session = flow.run_local_server(port=0)
-            if self.args.default:
-                self.obj.cred_store.add('default', creds=self.args.creds, override=True, session=session)
         else:
             self.logger.info(f'Missing key or credentials file.')
             return None
 
         self.logger.info(f'Authenticated successfully.' if session else f'Failed to authenticate.')
+        if self.args.store:
+            type = 'service' if self.args.service_account else 'oauth'
+            self.obj.cred_store.add(self.args.store, creds=self.args.creds, session=session, type=type)
         return session
+
+    @staticmethod
+    def get_auth_session(creds: dict, type: str, scopes: list) -> Optional[Credentials]:
+        '''Get an authenticated session from a credentials dict.'''
+        assert type in ('oauth', 'service'), f'Invalid type: {type}, expected "oauth" or "service"'
+        if type == 'oauth':
+            flow = InstalledAppFlow.from_client_config(creds, scopes=scopes)
+            return flow.run_local_server(port=0)
+        else:
+            return Credentials.from_service_account_info(creds)
 
     def list_sessions(self):
         cred_sessions = self.obj.cred_store.list_sessions()
