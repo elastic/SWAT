@@ -38,6 +38,7 @@ class ServiceAccountCreds(BaseCreds):
     project_id: str
     token_uri: str
     type: str
+    universe_domain: str
 
     @classmethod
     def from_file(cls, file: Path):
@@ -119,12 +120,15 @@ class CredStore:
             pickle.dump(self, f)
 
     def add(self, key: str, creds: Optional[CRED_TYPES] = None, session: Optional[Credentials] = None,
-            override: bool = False):
+            override: bool = False, type: Optional[Literal['oauth', 'service']] = None):
         '''Add a credential to the store.'''
         if key in self.store and not override:
             raise ValueError(f'Value exists for: {key}')
+        if isinstance(creds, Path):
+            creds = OAuthCreds.from_file(creds) if type == 'oauth' else ServiceAccountCreds.from_file(creds)
         cred = Cred(creds=creds, session=session)
         self.store[key] = cred
+        logging.info(f'Added {type} cred with key: {key}')
 
     def remove(self, key: str) -> bool:
         '''Remove cred by key and type.'''
@@ -158,7 +162,14 @@ class CredStore:
 
     def list_sessions(self) -> list[str]:
         '''Get the list of sessions from the store.'''
-        return [f'{k}:{v.session.__module__}:{v.session.client_id}' for k, v in self.store.items() if v.session]
+        sessions = []
+        for k, v in self.store.items():
+            if v.session:
+                if 'service' in v.session.__module__:
+                    sessions.append(f'{k}:{v.session.__module__}:{v.session.service_account_email}')
+                else:
+                    sessions.append(f'{k}:{v.session.__module__}:{v.session.client_id}')
+        return sessions
 
 
 @dataclass

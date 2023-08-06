@@ -71,6 +71,7 @@ venv.bak/
 *token.pickle
 *.pem
 *credentials.json
+*.json
 /credentials
 /credentials/*
 *.cred_store.json

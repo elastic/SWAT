@@ -91,7 +91,7 @@ class Command(BaseCommand):
 
         # Check if the session exists in the credential store
         if self.obj.cred_store.store.get('default') is None:
-            self.logger.error(f'Please authenticate with "auth session --default --config" before running this command.')
+            self.logger.error(f'Please authenticate with "auth session --default --creds" before running this command.')
             return
 
         try:
