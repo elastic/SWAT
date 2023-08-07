@@ -59,7 +59,7 @@ class Command(BaseCommand):
         '''View coverage details.'''
         entries = self.build_table_entries()
         if not entries:
-            self.logger('No results found.')
+            self.logger.info('No results found.')
         else:
             col_widths = [None, None, None, 50, None, 50]
             print(tabulate(entries, headers='keys', maxcolwidths=col_widths, tablefmt='fancy_grid'))

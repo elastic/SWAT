@@ -10,13 +10,12 @@ from . import utils
 from .base import SWAT
 from .commands.base_command import BaseCommand
 from .commands.emulate import Command as EmulateCommand
-from .misc import CustomHelpFormatter
+from .misc import CustomHelpFormatter, colorful_swat
 from .utils import clear_terminal
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 COMMANDS_DIR = ROOT_DIR / 'swat' / 'commands'
 CONFIG: dict = utils.load_etc_file('config.yaml')
-
 
 logo = '''
 ░██████╗░██╗░░░░░░░██╗░█████╗░████████╗
@@ -26,18 +25,14 @@ logo = '''
 ██████╔╝░░╚██╔╝░╚██╔╝░██║░░██║░░░██║░░░
 ╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝░░╚═╝░░░╚═╝░░░
 :: Simple Workspace ATT&CK Tool ::
-
 '''
-
 
 T = TypeVar('T', bound=BaseCommand)
 KEY = '\U0001F511'
 USER = '\U0001F464'
 
-
 class SWATShell(cmd.Cmd):
-
-    intro = logo
+    intro = colorful_swat(logo)
     prompt = 'SWAT> '
 
     def __init__(self, args: argparse.Namespace) -> None:
@@ -133,7 +128,7 @@ class SWATShell(cmd.Cmd):
                     parser: argparse.ArgumentParser = getattr(command_class, 'parser', None)
 
                     if custom:
-                        logging.info(f'{custom}\n')
+                            logging.info(f'{custom}')
                     elif parser:
                         subparsers = utils.load_subparsers(parser)
                         if remaining and remaining[0] in subparsers:

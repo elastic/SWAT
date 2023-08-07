@@ -1,13 +1,13 @@
 
 import argparse
+import json
 import os
 import sys
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, List
 
-import json
 import yaml
-
+from tabulate import tabulate
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 ETC_DIR = ROOT_DIR / 'swat' / 'etc'
@@ -48,3 +48,9 @@ def load_subparsers(parser: argparse.ArgumentParser, dest: str = 'subcommand') -
         if action.dest != dest:
             continue
         return action.choices
+
+def render_table(data: List[str], headers: List[str], table_format="fancy_grid"):
+    '''Renders a table from the provided data and headers.'''
+    table_data = [item.split(':') for item in data]
+    table = tabulate(table_data, headers, tablefmt=table_format)
+    return table

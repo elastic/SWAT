@@ -6,6 +6,7 @@ from typing import Optional
 
 from swat.commands.base_command import BaseCommand
 from swat.emulations.base_emulation import BaseEmulation
+from swat.utils import render_table
 
 EMULATIONS_DIR = Path(__file__).parent.parent.absolute() / 'emulations'
 
@@ -29,7 +30,10 @@ class Command(BaseCommand):
     @classmethod
     def custom_help(cls) -> str:
         '''Return the help message for the command.'''
-        return f'Execute attack Emulations [{"|".join(cls.get_emulate_commands())}]'
+        emulations = cls.load_all_emulation_classes()
+        emulation_details = [f'{emulation.__module__.split(".")[-1]}:{emulation.parser.description}:{emulation.techniques}'
+                for emulation in emulations]
+        print(f'Available Emulations: \n{render_table(emulation_details, headers=["emulation", "description", "techniques"])}')
 
     @staticmethod
     def get_dotted_command_path(command_name: str) -> str:
@@ -71,7 +75,9 @@ class Command(BaseCommand):
 
     def execute(self) -> None:
         if not self.emulation_command:
-            self.logger.info(f'Available commands: " + "|'.join(self.get_emulate_commands()))
+            available_emulations = self.get_emulate_commands()
+            for emulation in available_emulations:
+                self.logger.info(emulation + '\n')
         else:
             self.logger.info(f'Executing emulation: {self.emulation_name}')
             self.emulation_command.execute()

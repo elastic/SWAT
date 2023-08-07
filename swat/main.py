@@ -1,8 +1,10 @@
 import argparse
 import logging
 from pathlib import Path
+
 from . import utils
 from .logger import configure_logging
+from .misc import colorful_exit_message
 from .shell import SWATShell
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
@@ -24,7 +26,7 @@ def main():
     finally:
         if shell.save_on_exit:
             shell.obj.cred_store.save()
-        print(':: Until Next Time ::')
+        print(colorful_exit_message())
 
 
 if __name__ == '__main__':

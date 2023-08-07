@@ -75,7 +75,6 @@ class Command(BaseCommand):
     parser.add_argument('--filters', nargs='*', action=KeyValueAction, dest='filters', default={}, help='Filters to apply on the data')
     parser.add_argument('--interactive', action='store_true', help='Interactive mode')
 
-
     def __init__(self, **kwargs) -> None:
         '''
         Initializes a new instance of the Command class.
