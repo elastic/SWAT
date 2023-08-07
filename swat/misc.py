@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 
 import yaml
-
+from colorama import Fore, Style, init
 
 DEFAULT_CONFIG = Path(__file__).parent.parent / 'etc' / 'config.yaml'
 
@@ -34,3 +34,29 @@ def validate_args(parser: argparse.ArgumentParser, args: list[str]):
 
 def default_config():
     return yaml.safe_load(DEFAULT_CONFIG.read_text())
+
+
+def colorful_swat(logo: str) -> str:
+    colors = [Fore.RED, Fore.GREEN, Fore.BLUE, Fore.YELLOW]
+    subtitle = ":: Simple Workspace ATT&CK Tool ::"
+    words = subtitle.split(" ")
+    colored_subtitle = ":: "
+    for i, word in enumerate(words[1:-1]):
+        colored_subtitle += colors[i % len(colors)] + word + " "
+    colored_subtitle += "::"
+
+    colored_logo = logo.split("::")[0] + colored_subtitle
+
+    return colored_logo
+
+
+def colorful_exit_message() -> str:
+    colors = [Fore.RED, Fore.GREEN, Fore.YELLOW, Fore.BLUE]
+    subtitle = "See You Next Time"
+    words = subtitle.split(" ")
+    colored_subtitle = ""
+    for i, word in enumerate(words):
+        colored_subtitle += colors[i] + word + " "
+    colored_subtitle = colored_subtitle.strip()
+
+    return ":: " + colored_subtitle + " ::"
