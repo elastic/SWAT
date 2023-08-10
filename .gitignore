@@ -81,5 +81,9 @@ logs/
 logs/*
 *.log
 
-# Staged files
-/staging
+# artifacts
+/swat/etc/artifacts
+/swat/etc/artifacts/*
+
+# etc
+swat/etc/*chrome*

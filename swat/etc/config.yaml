@@ -14,12 +14,7 @@ google:
       - actor
       - address
       - value
-mitre:
-  tactics:
-    - collection
-    - credential_access
-    - defense_evasion
-    - initial_access
+  domain: NULL
 logging:
   level: info
   format: text
