@@ -1,13 +1,11 @@
 import io
 import os
-import shutil
 import tempfile
 import time
 
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
+from googleapiclient.http import MediaFileUpload
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 
 from swat.emulations.base_emulation import BaseEmulation
 from swat.utils import ETC_DIR, get_chromedriver
