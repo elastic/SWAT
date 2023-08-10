@@ -10,6 +10,7 @@ class Emulation(BaseEmulation):
 
     techniques = ['T1098.003']
     name = 'Add Roles to User(s)'
+    services = ['admin']
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

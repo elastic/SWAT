@@ -16,6 +16,7 @@ from tabulate import tabulate
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 ETC_DIR = ROOT_DIR / 'swat' / 'etc'
+DEFAULT_EMULATION_ARTIFACTS_DIR = ETC_DIR / 'artifacts'
 
 
 class PathlibEncoder(json.JSONEncoder):
@@ -111,7 +112,14 @@ def get_chromedriver(chromedriver_path: Optional[Path] = None) -> webdriver.Chro
         chromedriver_path = download_chromedriver(ETC_DIR)
 
     options = webdriver.ChromeOptions()
+
+    DEFAULT_EMULATION_ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
+    options.add_experimental_option('prefs', {
+    "download.default_directory": str(DEFAULT_EMULATION_ARTIFACTS_DIR), # set the download directory
+    "download.prompt_for_download": False, # disable download prompt
+})
     options.add_argument('--headless')  # Run Chrome in headless mode
+
     service = Service(executable_path=str(chromedriver_path))
     driver = webdriver.Chrome(service=service, options=options)
 

@@ -6,6 +6,8 @@ import time
 
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 
 from swat.emulations.base_emulation import BaseEmulation
 from swat.utils import ETC_DIR, get_chromedriver
@@ -14,25 +16,27 @@ from swat.utils import ETC_DIR, get_chromedriver
 class Emulation(BaseEmulation):
     parser = BaseEmulation.load_parser(description='Stages sensitive encryption key files in Google Drive and accesses them via shared links.')
     parser.add_argument('folder_id', help='Google Drive Folder ID')
-    parser.add_argument('--cleanup', action='store_true', help='Clean up staged files after execution')
+    parser.add_argument('--cleanup', action='store_true', default=False, help='Clean up staged files after execution')
 
     techniques = ['T1530']
     name = 'Access Stored Keys and Tokens in Drive'
+    services = ['drive']
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.folder_id = self.args.folder_id
         self.service = build('drive', 'v3', credentials=self.obj.cred_store.store['default'].session)
-        self.file_extensions = ["token", "assig", "pssc", "keystore", "pub", "pgp.asc", "ps1xml", "pem", "gpg.sig",
-                       "der", "key", "p7r", "p12", "asc", "jks", "p7b", "signature", "gpg", "pgp.sig",
-                       "sst", "pgp", "gpgz", "pfx", "crt", "p8", "sig", "pkcs7", "jceks", "pkcs8", "psc1",
-                       "p7c", "csr", "cer", "spc", "ps2xml"]
+        # file extensions filtered to 5 for testing purposes
+        self.file_extensions = ["token","assig", "pssc", "keystore", "pub", "pgp.asc", "ps1xml", "pem", "gpg.sig", "der", "key",
+            "p7r", "p12", "asc", "jks", "p7b", "signature", "gpg", "pgp.sig", "sst", "pgp", "gpgz", "pfx", "crt",
+            "p8", "sig", "pkcs7", "jceks", "pkcs8", "psc1", "p7c", "csr", "cer", "spc", "ps2xml"][:5]
 
     def stage_files(self) -> list[str]:
+        '''Stage files in Google Drive and return a list of shareable links.'''
 
         shareable_links = []
 
-        for ext in file_extensions:
+        for ext in self.file_extensions:
             file_name = f"fake_file.{ext}"
             file_content = f"This is a fake {file_name}"  # You can customize the content
 
@@ -59,18 +63,23 @@ class Emulation(BaseEmulation):
 
         return shareable_links
 
-
     def access_files(self, share_links) -> None:
-        '''Access the staged files via shared links.'''
+        '''Access the staged files via shared links and download them.'''
 
         self.elogger.info(f'Accessing staged files via shared links')
         driver = get_chromedriver()
 
-        # Open each share link in Chrome
+        # Open each share link in Chrome and download the file
         for link in share_links:
+            file_id = link.split('/')[-2]  # Extracting the file ID from the share link
+            # view the file
             driver.get(link)
-            self.elogger.info(f"Accessed {link}")
-            time.sleep(1)  # You can modify the sleep time
+            self.elogger.info(f"Accessed file at {link}")
+            # download the file
+            download_link = f"https://drive.google.com/uc?export=download&confirm=no_antivirus&id={file_id}"
+            driver.get(download_link)
+            self.elogger.info(f"Downloaded file from {download_link}")
+            time.sleep(1)  # You can modify the sleep time, or use WebDriverWait if needed
 
         # Close Chrome
         driver.quit()
@@ -91,5 +100,5 @@ class Emulation(BaseEmulation):
         self.elogger.info(self.exec_str(self.parser.description))
         share_links = self.stage_files()
         self.access_files(share_links)
-        if self.cleanup:
+        if self.args.cleanup:
             self.cleanup()

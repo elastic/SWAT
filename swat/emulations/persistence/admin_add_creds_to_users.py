@@ -10,6 +10,7 @@ class Emulation(BaseEmulation):
 
     techniques = ['T1098.001']
     name = 'Add Cloud Credentials to User(s)'
+    services = ['admin']
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
