@@ -82,7 +82,7 @@ class Emulation(BaseEmulation):
         # Close Chrome
         driver.quit()
 
-    def cleanup(self):
+    def cleanup(self) -> None:
         '''Clean up staged files from Google Drive.'''
         # Query the files in the specified folder
         results = self.service.files().list(q=f"'{self.folder_id}' in parents").execute()
