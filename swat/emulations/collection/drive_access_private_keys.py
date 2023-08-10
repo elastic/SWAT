@@ -17,13 +17,16 @@ class Emulation(BaseEmulation):
     parser.add_argument('--cleanup', action='store_true', help='Clean up staged files after execution')
 
     techniques = ['T1530']
-    name = 'Download Stored Encryption Keys'
+    name = 'Access Stored Keys and Tokens in Drive'
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.folder_id = self.args.folder_id
         self.service = build('drive', 'v3', credentials=self.obj.cred_store.store['default'].session)
-        self.file_extensions = ["token", "assig", "pssc", "keystore", "pub", "pgp.asc", "ps1xml", "pem", "gpg.sig"]
+        self.file_extensions = ["token", "assig", "pssc", "keystore", "pub", "pgp.asc", "ps1xml", "pem", "gpg.sig",
+                       "der", "key", "p7r", "p12", "asc", "jks", "p7b", "signature", "gpg", "pgp.sig",
+                       "sst", "pgp", "gpgz", "pfx", "crt", "p8", "sig", "pkcs7", "jceks", "pkcs8", "psc1",
+                       "p7c", "csr", "cer", "spc", "ps2xml"]
 
     def stage_files(self) -> list[str]:
 
