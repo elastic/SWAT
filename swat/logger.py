@@ -7,7 +7,7 @@ DEFAULT_LOGGING_PATH = Path.cwd() / 'logs'
 init(autoreset=True)  # Automatically reset color after each print
 
 def configure_logging(config: dict = None, level: int = logging.INFO) -> None:
-    '''Logging for the entire application.'''
+    """Logging for the entire application."""
     log_file_format = config['logging']['log_file_format']
     log_console_format = config['logging']['log_console_format']
 
@@ -48,7 +48,7 @@ def configure_logging(config: dict = None, level: int = logging.INFO) -> None:
     logger.addHandler(file_handler)
 
 def configure_emulation_logger(emulation_name: str, config: dict, level: int = logging.INFO) -> logging.Logger:
-    '''Logging for a specific emulation.'''
+    """Logging for a specific emulation."""
     elogger = logging.getLogger(f'{emulation_name}')
 
     # Ensure 'logs' directory exists

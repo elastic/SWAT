@@ -1,12 +1,10 @@
 import argparse
-import logging
 import re
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, Optional, Sequence, Union
 
 import pandas as pd
-from colorama import Fore, Style
-from google.oauth2.service_account import Credentials
+from colorama import Fore
 import googleapiclient
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -22,7 +20,7 @@ class KeyValueAction(argparse.Action):
                  namespace: argparse.Namespace,
                  values: Union[str, Sequence[Any]],
                  option_string: Optional[str] = None) -> None:
-        '''
+        """
         The method is called when this action is specified on the command line.
 
         Parameters:
@@ -36,7 +34,7 @@ class KeyValueAction(argparse.Action):
 
         Returns:
         None
-        '''
+        """
         for value in values:
             key, sep, val = value.partition('=')
             if sep != '=':
@@ -45,12 +43,13 @@ class KeyValueAction(argparse.Action):
 
 @dataclass
 class Filters:
-    '''Dataclass representing a set of filters.'''
+    """Dataclass representing a set of filters."""
 
     filters: Optional[Dict[str, Any]] = None
 
+
 class Command(BaseCommand):
-    '''
+    """
     Command class for handling Google Workspace Audit command operations.
 
     Attributes:
@@ -59,7 +58,7 @@ class Command(BaseCommand):
         application (str): The Google Workspace application name for which audit logs are to be fetched.
         filters (Filters): An object of Filters class that holds a dictionary of filter key-value pairs.
         parser (argparse.ArgumentParser): Argument parser object to parse command line arguments.
-    '''
+    """
 
     service: googleapiclient.discovery.Resource
     duration: str
@@ -76,7 +75,7 @@ class Command(BaseCommand):
     parser.add_argument('--interactive', action='store_true', help='Interactive mode')
 
     def __init__(self, **kwargs) -> None:
-        '''
+        """
         Initializes a new instance of the Command class.
 
         Parameters:
@@ -85,7 +84,7 @@ class Command(BaseCommand):
         Raises:
             ImportError: If the pandas package is not installed.
             HttpError: If there is an error while building the Google Workspace admin service.
-        '''
+        """
         super().__init__(**kwargs)
 
         # Check if the session exists in the credential store
@@ -112,12 +111,12 @@ class Command(BaseCommand):
 
         # Setup filters
         if self.args.filters:
-            self.args.filters = [f.strip('\'"') for f in args.filters]
+            self.args.filters = [f.strip('\'"') for f in self.args.filters]
             self.filters = Filters(self.args.filters)
 
 
     def export_data(self, df: pd.DataFrame) -> None:
-        '''
+        """
         Exports the dataframe to a specified format.
 
         Parameters:
@@ -125,7 +124,7 @@ class Command(BaseCommand):
 
         Raises:
             Warning: If the specified export format is not supported.
-        '''
+        """
         export_path = ROOT_DIR / f'{self.application}_{self.duration}.{self.args.export_format}'
         if self.args.export_format == 'csv':
             df.to_csv(export_path, index=False)
@@ -138,7 +137,7 @@ class Command(BaseCommand):
 
 
     def flatten_json(self, y: dict) -> dict:
-        '''
+        """
         Flattens a nested dictionary and returns a new dictionary with
         flattened structure where the nested keys are joined with underscore '_'.
 
@@ -147,7 +146,7 @@ class Command(BaseCommand):
 
         Returns:
             dict: The flattened dictionary.
-        '''
+        """
         out = {}
 
         def flatten(x, name=''):
@@ -166,7 +165,7 @@ class Command(BaseCommand):
         return out
 
     def flatten_activities(self, activities: list) -> pd.DataFrame:
-        '''
+        """
         Flattens the activities data and converts it into a DataFrame.
 
         Parameters:
@@ -174,7 +173,7 @@ class Command(BaseCommand):
 
         Returns:
             pandas.DataFrame: The DataFrame containing the flattened activities data.
-        '''
+        """
         flattened_data = []
         for activity in activities:
             events = activity.pop('events')
@@ -190,13 +189,13 @@ class Command(BaseCommand):
 
 
     def fetch_data(self) -> pd.DataFrame:
-        '''
+        """
         Fetches the activity data from the Google Workspace Audit service, using the provided start time,
         application name, and user key. The data is returned as a pandas DataFrame.
 
         Returns:
             pandas.DataFrame: The DataFrame containing the fetched activity data.
-        '''
+        """
         now = pd.Timestamp.now(tz='UTC')
         start_time = (now - pd.to_timedelta(self.duration)).isoformat()
         request = self.service.activities().list(userKey='all', applicationName=self.application, startTime=start_time)
@@ -219,7 +218,7 @@ class Command(BaseCommand):
         return df
 
     def filter_columns(self, df: pd.DataFrame) -> pd.DataFrame:
-        '''
+        """
         Filters the dataframe based on the columns specified in the arguments or in the config file.
 
         Args:
@@ -227,14 +226,14 @@ class Command(BaseCommand):
 
         Returns:
             pd.DataFrame: The filtered dataframe.
-        '''
+        """
         columns = self.args.columns or self.obj.config['google']['audit']['columns']
         modified_columns = ['.*' + column + '.*' for column in columns]
         df = df[[column for column in df.columns for pattern in modified_columns if re.search(pattern, column, re.IGNORECASE)]]
         return df
 
     def interactive_session(self, df: pd.DataFrame, df_unfiltered: pd.DataFrame) -> None:
-        '''
+        """
         Starts an interactive session that allows the user to select specific columns to display and rows to expand.
 
         Args:
@@ -243,7 +242,7 @@ class Command(BaseCommand):
 
         Returns:
             None
-        '''
+        """
         # Ask the user which columns to display
         selected_columns_input = input('Enter the columns to display, separated by commas (see logged available columns): ')
         selected_columns = [column.strip() for column in selected_columns_input.split(',')]
@@ -269,7 +268,7 @@ class Command(BaseCommand):
                     self.logger.warning(f'Invalid row number: {row_number}')
 
     def show_results(self, df: pd.DataFrame) -> None:
-        '''
+        """
         Prints the DataFrame to the console in a markdown table format.
 
         Args:
@@ -277,12 +276,12 @@ class Command(BaseCommand):
 
         Returns:
             None
-        '''
+        """
         print(Fore.GREEN + df.to_markdown(headers='keys', tablefmt='fancy_grid') + Fore.RESET)
 
 
     def execute(self) -> None:
-        '''
+        """
         Main execution method of the Command class.
 
         Fetches the data, logs the results, and based on the provided arguments either exports the data,
@@ -290,7 +289,7 @@ class Command(BaseCommand):
 
         Returns:
             None
-        '''
+        """
         df = self.fetch_data()
         df_unfiltered = df.copy()
         if df is None:

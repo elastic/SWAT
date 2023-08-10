@@ -26,7 +26,7 @@ class PathlibEncoder(json.JSONEncoder):
 
 
 def load_etc_file(filename: str) -> Union[str, dict]:
-    '''Load a  file from the etc directory.'''
+    """Load a  file from the etc directory."""
     path = ETC_DIR / filename
     contents = path.read_text()
     if path.suffix == '.txt':
@@ -37,32 +37,32 @@ def load_etc_file(filename: str) -> Union[str, dict]:
         return yaml.safe_load(contents)
 
 def check_file_exists(file: Path, error_message: str) -> None:
-    '''Check if the given file exists, raise an error if it does not.'''
+    """Check if the given file exists, raise an error if it does not."""
     if not file.exists():
         raise FileNotFoundError(f'{error_message}: {file}')
     if file.is_dir():
         raise IsADirectoryError(f'{error_message}: {file}')
 
 def clear_terminal() -> None:
-    '''Clear the terminal.'''
+    """Clear the terminal."""
     os.system('cls' if sys.platform == 'windows' else 'clear')
 
 
 def load_subparsers(parser: argparse.ArgumentParser, dest: str = 'subcommand') -> Optional[dict]:
-    '''Load subparsers by name if they exist.'''
+    """Load subparsers by name if they exist."""
     for action in parser._actions:
         if action.dest != dest:
             continue
         return action.choices
 
 def render_table(data: List[str], headers: List[str], table_format="fancy_grid"):
-    '''Renders a table from the provided data and headers.'''
+    """Renders a table from the provided data and headers."""
     table_data = [item.split(':') for item in data]
     table = tabulate(table_data, headers, tablefmt=table_format)
     return table
 
 def download_chromedriver(destination_path: Path) -> Path:
-    '''Download the appropriate ChromeDriver for the system and return its path.'''
+    """Download the appropriate ChromeDriver for the system and return its path."""
     base_url = "https://chromedriver.storage.googleapis.com/"
     latest_version_url = f"{base_url}LATEST_RELEASE"
 
@@ -105,7 +105,7 @@ def download_chromedriver(destination_path: Path) -> Path:
     return destination_path / 'chromedriver'
 
 def get_chromedriver(chromedriver_path: Optional[Path] = None) -> webdriver.Chrome:
-    '''Return a Chrome WebDriver instance, downloading ChromeDriver if necessary.'''
+    """Return a Chrome WebDriver instance, downloading ChromeDriver if necessary."""
     chromedriver_path = chromedriver_path or ETC_DIR / 'chromedriver'
 
     if not chromedriver_path.exists():

@@ -3,13 +3,13 @@ import argparse
 from pathlib import Path
 
 import yaml
-from colorama import Fore, Style, init
+from colorama import Fore
 
 DEFAULT_CONFIG = Path(__file__).parent.parent / 'etc' / 'config.yaml'
 
 
 class CustomHelpFormatter(argparse.HelpFormatter):
-    '''Override the default help formatter to exclude usage.'''
+    """Override the default help formatter to exclude usage."""
 
     def add_usage(self, usage, actions, groups, prefix=None):
         # Do nothing, effectively skipping usage output
@@ -22,7 +22,7 @@ def get_custom_argparse_formatter(*args, **kwargs) -> argparse.ArgumentParser:
 
 
 def validate_args(parser: argparse.ArgumentParser, args: list[str]):
-    '''Parse arguments.'''
+    """Parse arguments."""
     try:
         parsed_args, unknown = parser.parse_known_args(args)
         if unknown:

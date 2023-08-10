@@ -5,10 +5,9 @@ import time
 
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from selenium.webdriver.common.by import By
 
 from swat.emulations.base_emulation import BaseEmulation
-from swat.utils import ETC_DIR, get_chromedriver
+from swat.utils import get_chromedriver
 
 
 class Emulation(BaseEmulation):
@@ -25,12 +24,14 @@ class Emulation(BaseEmulation):
         self.folder_id = self.args.folder_id
         self.service = build('drive', 'v3', credentials=self.obj.cred_store.store['default'].session)
         # file extensions filtered to 5 for testing purposes
-        self.file_extensions = ["token","assig", "pssc", "keystore", "pub", "pgp.asc", "ps1xml", "pem", "gpg.sig", "der", "key",
-            "p7r", "p12", "asc", "jks", "p7b", "signature", "gpg", "pgp.sig", "sst", "pgp", "gpgz", "pfx", "crt",
-            "p8", "sig", "pkcs7", "jceks", "pkcs8", "psc1", "p7c", "csr", "cer", "spc", "ps2xml"][:5]
+        self.file_extensions = [
+            "token","assig", "pssc", "keystore", "pub", "pgp.asc", "ps1xml", "pem", "gpg.sig", "der", "key","p7r", 
+            "p12", "asc", "jks", "p7b", "signature", "gpg", "pgp.sig", "sst", "pgp", "gpgz", "pfx", "crt", "p8", "sig", 
+            "pkcs7", "jceks", "pkcs8", "psc1", "p7c", "csr", "cer", "spc", "ps2xml"
+        ][:5]  # TODO: why create a list and immediate slice it to 5?
 
     def stage_files(self) -> list[str]:
-        '''Stage files in Google Drive and return a list of shareable links.'''
+        """Stage files in Google Drive and return a list of shareable links."""
 
         shareable_links = []
 
@@ -62,7 +63,7 @@ class Emulation(BaseEmulation):
         return shareable_links
 
     def access_files(self, share_links) -> None:
-        '''Access the staged files via shared links and download them.'''
+        """Access the staged files via shared links and download them."""
 
         self.elogger.info(f'Accessing staged files via shared links')
         driver = get_chromedriver()
@@ -83,7 +84,7 @@ class Emulation(BaseEmulation):
         driver.quit()
 
     def cleanup(self) -> None:
-        '''Clean up staged files from Google Drive.'''
+        """Clean up staged files from Google Drive."""
         # Query the files in the specified folder
         results = self.service.files().list(q=f"'{self.folder_id}' in parents").execute()
         files = results.get('files', [])
@@ -94,7 +95,7 @@ class Emulation(BaseEmulation):
             self.elogger.info(f"Deleted {file['name']} from Google Drive")
 
     def execute(self) -> None:
-        '''Main execution method.'''
+        """Main execution method."""
         self.elogger.info(self.exec_str(self.parser.description))
         share_links = self.stage_files()
         self.access_files(share_links)

@@ -8,7 +8,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from ..commands.base_command import BaseCommand
 from ..utils import ROOT_DIR, check_file_exists
 from ..misc import validate_args
-from ..base import ServiceAccountCreds, OAuthCreds
 
 DEFAULT_TOKEN_FILE = ROOT_DIR / 'token.pkl'
 
@@ -35,7 +34,7 @@ class Command(BaseCommand):
         self.args = validate_args(self.parser, self.args)
 
     def authenticate(self) -> Optional[Credentials]:
-        '''Authenticate with Google Workspace using OAuth2.0.'''
+        """Authenticate with Google Workspace using OAuth2.0."""
         if self.args.key:
             validate_type = 'service' if self.args.service_account else 'oauth'
             cred = self.obj.cred_store.get(self.args.key, validate_type=validate_type)
@@ -66,13 +65,13 @@ class Command(BaseCommand):
 
         self.logger.info(f'Authenticated successfully.' if session else f'Failed to authenticate.')
         if self.args.store:
-            type = 'service' if self.args.service_account else 'oauth'
-            self.obj.cred_store.add(self.args.store, creds=self.args.creds, session=session, type=type)
+            cred_type = 'service' if self.args.service_account else 'oauth'
+            self.obj.cred_store.add(self.args.store, creds=self.args.creds, session=session, type=cred_type)
         return session
 
     @staticmethod
     def get_auth_session(creds: dict, type: str, scopes: list) -> Optional[Credentials]:
-        '''Get an authenticated session from a credentials dict.'''
+        """Get an authenticated session from a credentials dict."""
         assert type in ('oauth', 'service'), f'Invalid type: {type}, expected "oauth" or "service"'
         if type == 'oauth':
             flow = InstalledAppFlow.from_client_config(creds, scopes=scopes)
