@@ -9,7 +9,7 @@ from typing import Optional
 import yaml
 
 from ..attack import lookup_technique_by_id
-from ..base import SWAT
+from ..base import SWAT, DEFAULT_EMULATION_ARTIFACTS_DIR
 from ..logger import configure_emulation_logger
 from ..misc import get_custom_argparse_formatter, validate_args
 
@@ -63,6 +63,7 @@ class BaseEmulation:
         self.elogger = configure_emulation_logger(emulation_name, obj.config)
         self.econfig = self.load_emulation_config()
         self.attack_data = self.get_attack()
+        self.artifacts_path = self.setup_artifacts_folder()
 
         assert self.parser, '"parser" must be implemented in each emulation command class'
         self.args = validate_args(self.parser, args)
@@ -108,3 +109,9 @@ class BaseEmulation:
         else:
             return None
 
+    @classmethod
+    def setup_artifacts_folder(self) -> Path:
+        '''Create the artifacts folder if it doesn't exist.'''
+        DEFAULT_EMULATION_ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
+        return DEFAULT_EMULATION_ARTIFACTS_DIR
+        self.logger.info(f'Artifacts folder created: {DEFAULT_EMULATION_ARTIFACTS_DIR}')

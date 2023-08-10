@@ -14,6 +14,7 @@ from .utils import ROOT_DIR, PathlibEncoder
 
 
 DEFAULT_CRED_STORE_FILE = ROOT_DIR / 'swat' / 'etc' / '.cred_store.pkl'
+DEFAULT_EMULATION_ARTIFACTS_DIR = ROOT_DIR / 'swat' / 'etc' / 'artifacts'
 
 
 @dataclass
