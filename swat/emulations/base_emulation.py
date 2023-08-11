@@ -107,8 +107,7 @@ class BaseEmulation:
         if config_file_path.exists():
             return yaml.safe_load(config_file_path.read_text())
 
-    @classmethod
-    def setup_artifacts_folder(cls) -> Path:
+    def setup_artifacts_folder(self) -> Path:
         """Create the artifacts folder if it doesn't exist."""
         DEFAULT_EMULATION_ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
         # TODO: fix

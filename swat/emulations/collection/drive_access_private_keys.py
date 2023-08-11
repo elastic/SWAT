@@ -2,6 +2,7 @@ import io
 import os
 import tempfile
 import time
+import shutil
 
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
@@ -12,21 +13,23 @@ from swat.utils import get_chromedriver
 
 class Emulation(BaseEmulation):
     parser = BaseEmulation.load_parser(description='Stages sensitive encryption key files in Google Drive and accesses them via shared links.')
+    parser.add_argument('session_key', default='default', help='Session to use for service building API service')
     parser.add_argument('folder_id', help='Google Drive Folder ID')
     parser.add_argument('--cleanup', action='store_true', default=False, help='Clean up staged files after execution')
 
-    techniques = ['T1530']
+    techniques = ['T1552.004']
     name = 'Access Stored Keys and Tokens in Drive'
+    scopes = ['drive.file','drive.readonly','drive']
     services = ['drive']
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.folder_id = self.args.folder_id
-        self.service = build('drive', 'v3', credentials=self.obj.cred_store.store['default'].session)
+        self.service = build('drive', 'v3', credentials=self.obj.cred_store.store[self.args.session_key].session)
         # file extensions filtered to 5 for testing purposes
         self.file_extensions = [
-            "token","assig", "pssc", "keystore", "pub", "pgp.asc", "ps1xml", "pem", "gpg.sig", "der", "key","p7r", 
-            "p12", "asc", "jks", "p7b", "signature", "gpg", "pgp.sig", "sst", "pgp", "gpgz", "pfx", "crt", "p8", "sig", 
+            "token","assig", "pssc", "keystore", "pub", "pgp.asc", "ps1xml", "pem", "gpg.sig", "der", "key","p7r",
+            "p12", "asc", "jks", "p7b", "signature", "gpg", "pgp.sig", "sst", "pgp", "gpgz", "pfx", "crt", "p8", "sig",
             "pkcs7", "jceks", "pkcs8", "psc1", "p7c", "csr", "cer", "spc", "ps2xml"
         ][:5]  # TODO: why create a list and immediate slice it to 5?
 
@@ -93,6 +96,10 @@ class Emulation(BaseEmulation):
         for file in files:
             self.service.files().delete(fileId=file['id']).execute()
             self.elogger.info(f"Deleted {file['name']} from Google Drive")
+
+        # Delete local artifacts directory
+        shutil.rmtree(self.artifacts_path)
+        self.logger.info(f"Deleted local artifacts directory: {self.artifacts}")
 
     def execute(self) -> None:
         """Main execution method."""

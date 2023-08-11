@@ -31,11 +31,14 @@ class Command(BaseCommand):
     def custom_help(cls) -> str:
         """Return the help message for the command."""
         emulations = cls.load_all_emulation_classes()
-        emulation_details = [f'{emulation.name}:{emulation.__module__.split(".")[-1]}:{emulation.parser.description}:{emulation.services}:{emulation.techniques}'
-                for emulation in emulations]
-        table = render_table(emulation_details,
-                             headers=["name","emulation command", "description", "services", "techniques"])
-        return f'Available Emulations: \n{table}\n'
+        emulation_details = [
+            f'{emulation.name}:{emulation.__module__.split(".")[-1]}:'
+            f'{emulation.parser.description}:{emulation.services}:'
+            f'{emulation.scopes}:{emulation.techniques}'
+            for emulation in emulations
+        ]
+        headers = ['name', 'emulation command', 'description', 'services', 'scopes', 'techniques']
+        print(f'Available Emulations: \n{render_table(emulation_details, headers=headers)}')
 
     @staticmethod
     def get_dotted_command_path(command_name: str) -> str:

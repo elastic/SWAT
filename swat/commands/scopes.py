@@ -1,6 +1,6 @@
 
 from ..commands.base_command import BaseCommand
-from ..utils import ROOT_DIR
+from ..utils import ROOT_DIR, format_scopes
 from ..misc import validate_args
 
 DEFAULT_TOKEN_FILE = ROOT_DIR / "token.pickle"
@@ -30,10 +30,15 @@ class Command(BaseCommand):
         self.args = validate_args(self.parser, self.args)
 
     def add_scope(self):
+        self.args.scope = format_scopes(self.args.scope)
+        if self.args.scope in self.obj.config['google']['scopes']:
+            self.logger.info(f"Scope already exists: {self.args.scope}")
+            return
         self.obj.config['google']['scopes'].append(self.args.scope)
-        self.logger.info(f"Added scope: {self.args.scope}")
+        self.logger.info(f"Added scope(s): {self.args.scope}")
 
     def remove_scope(self):
+        self.args.scope = format_scopes(self.args.scope)
         if self.args.scope in self.obj.config['google']['scopes']:
             self.obj.config['google']['scopes'].remove(self.args.scope)
             self.logger.info(f"Removed scope: {self.args.scope}")
