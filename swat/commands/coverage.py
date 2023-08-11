@@ -60,7 +60,7 @@ class Command(BaseCommand):
         if not entries:
             self.logger.info('No results found.')
         else:
-            col_widths = [None, None, None, 50, None, 50]
+            col_widths = [None, None, None, 30, None, 30]
             print(tabulate(entries, headers='keys', maxcolwidths=col_widths, tablefmt='fancy_grid'))
 
     def execute(self) -> None:

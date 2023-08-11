@@ -7,6 +7,7 @@ import sys
 import zipfile
 from pathlib import Path
 from typing import List, Optional, Union
+import textwrap
 
 import requests
 import yaml
@@ -55,10 +56,16 @@ def load_subparsers(parser: argparse.ArgumentParser, dest: str = 'subcommand') -
             continue
         return action.choices
 
-def render_table(data: List[str], headers: List[str], table_format="fancy_grid"):
-    """Renders a table from the provided data and headers."""
-    table_data = [item.split(':') for item in data]
-    table = tabulate(table_data, headers, tablefmt=table_format)
+def render_table(data: List[str], headers: List[str], table_format="fancy_grid", max_width=30):
+    '''Renders a table from the provided data and headers, wrapping text if it exceeds max_width.'''
+
+    def wrap_text(text):
+        '''Wrap text if it exceeds max_width.'''
+        return '\n'.join(wrap(text, max_width))
+
+    table_data = [[wrap_text(cell) for cell in item.split(':')] for item in data]
+    wrapped_headers = [wrap_text(header) for header in headers]
+    table = tabulate(table_data, wrapped_headers, tablefmt=table_format)
     return table
 
 def download_chromedriver(destination_path: Path) -> Path:

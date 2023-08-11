@@ -1,7 +1,13 @@
 google:
   scopes:
-    - https://www.googleapis.com/auth/admin.directory.user
-    - https://www.googleapis.com/auth/admin.reports.audit.readonly
+    - admin.directory.user
+    - admin.reports.audit.readonly
+    - drive.file
+    - drive.readonly
+    - drive
+    - gmail.send
+    - gmail.readonly
+    - gmail.compose
   audit:
     columns:
       - type

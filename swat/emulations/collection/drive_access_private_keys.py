@@ -12,17 +12,19 @@ from swat.utils import get_chromedriver
 
 class Emulation(BaseEmulation):
     parser = BaseEmulation.load_parser(description='Stages sensitive encryption key files in Google Drive and accesses them via shared links.')
+    parser.add_argument('session_key', required=True, default='default', help='Session to use for service building API service')
     parser.add_argument('folder_id', help='Google Drive Folder ID')
     parser.add_argument('--cleanup', action='store_true', default=False, help='Clean up staged files after execution')
 
-    techniques = ['T1530']
+    techniques = ['T1552.004']
     name = 'Access Stored Keys and Tokens in Drive'
+    scopes = ['drive.file','drive.readonly','drive']
     services = ['drive']
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.folder_id = self.args.folder_id
-        self.service = build('drive', 'v3', credentials=self.obj.cred_store.store['default'].session)
+        self.service = build('drive', 'v3', credentials=self.obj.cred_store.store[self.args.session_key].session)
         # file extensions filtered to 5 for testing purposes
         self.file_extensions = [
             "token","assig", "pssc", "keystore", "pub", "pgp.asc", "ps1xml", "pem", "gpg.sig", "der", "key","p7r", 
