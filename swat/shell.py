@@ -43,7 +43,7 @@ class SWATShell(cmd.Cmd):
 
         self.args = args
         self.obj = SWAT(CONFIG)
-        #self.obj.config['google']['scopes'] = format_scopes(self.obj.config['google']['scopes'])
+        self.obj.config['google']['scopes'] = format_scopes(self.obj.config['google']['scopes'])
 
         self._command_name = None
         self._new_args = None

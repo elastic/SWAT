@@ -132,6 +132,11 @@ def get_chromedriver(chromedriver_path: Optional[Path] = None) -> webdriver.Chro
 
     return driver
 
-def format_scopes(scopes: List[str]) -> List[str]:
+def format_scopes(scopes: Union[str, List[str]]) -> List[str]:
     """Format a list of scopes for display."""
-    return [f'https://www.googleapis.com/auth/{scope}' for scope in scopes]
+    if isinstance(scopes, str):
+        return f'https://www.googleapis.com/auth/{scopes}' \
+               if 'https://www.googleapis.com/auth/' not in scopes else scopes
+    else:
+        return [f'https://www.googleapis.com/auth/{scope}' for
+                scope in scopes if 'https://www.googleapis.com/auth/' not in scope]
