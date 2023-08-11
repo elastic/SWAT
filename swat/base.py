@@ -112,21 +112,18 @@ class CredStore:
     def from_file(cls, file: Path = DEFAULT_CRED_STORE_FILE) -> Optional['CredStore']:
         if file.exists():
             logging.info(f'Loaded cred store dump from: {file}')
-            with open(file, 'rb') as f:
-                return pickle.load(f)
+            return pickle.loads(file.read_bytes())
 
     def save(self):
         logging.info(f'Saved cred store to {self.path}')
-        with open(self.path, 'wb') as f:
-            pickle.dump(self, f)
+        self.path.write_bytes(pickle.dumps(self))
 
     def add(self, key: str, creds: Optional[CRED_TYPES] = None, session: Optional[Credentials] = None,
             override: bool = False, type: Optional[Literal['oauth', 'service']] = None):
         """Add a credential to the store."""
         if key in self.store and not override:
             raise ValueError(f'Value exists for: {key}')
-        if isinstance(creds, Path):
-            creds = OAuthCreds.from_file(creds) if type == 'oauth' else ServiceAccountCreds.from_file(creds)
+
         cred = Cred(creds=creds, session=session)
         self.store[key] = cred
         logging.info(f'Added {type} cred with key: {key}')
