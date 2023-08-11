@@ -2,6 +2,7 @@ import io
 import os
 import tempfile
 import time
+import shutil
 
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
@@ -95,6 +96,10 @@ class Emulation(BaseEmulation):
         for file in files:
             self.service.files().delete(fileId=file['id']).execute()
             self.elogger.info(f"Deleted {file['name']} from Google Drive")
+
+        # Delete local artifacts directory
+        shutil.rmtree(self.artifacts_path)
+        self.logger.info(f"Deleted local artifacts directory: {self.artifacts}")
 
     def execute(self) -> None:
         """Main execution method."""
