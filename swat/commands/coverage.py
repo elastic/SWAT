@@ -35,7 +35,7 @@ class Command(BaseCommand):
         self.emulate_commands = EmulateCommand.load_all_emulation_classes()
 
     def build_table_entries(self) -> list[dict]:
-        '''Build dict format for table.'''
+        """Build dict format for table."""
         details = []
         for command in self.emulate_commands:
             details.extend([v for k, v in command.get_attack().technique_details().items()])
@@ -47,16 +47,15 @@ class Command(BaseCommand):
 
     @staticmethod
     def refresh() -> None:
-        '''Refresh the ATT&CK data.'''
+        """Refresh the ATT&CK data."""
         download_attack_data()
 
-    @staticmethod
-    def version() -> None:
-        '''Show the ATT&CK version.'''
+    def version(self) -> None:
+        """Show the ATT&CK version."""
         self.logger.info(f'ATT&CK version: {load_attack_data()["version"]}')
 
     def view(self) -> None:
-        '''View coverage details.'''
+        """View coverage details."""
         entries = self.build_table_entries()
         if not entries:
             self.logger.info('No results found.')
@@ -65,5 +64,5 @@ class Command(BaseCommand):
             print(tabulate(entries, headers='keys', maxcolwidths=col_widths, tablefmt='fancy_grid'))
 
     def execute(self) -> None:
-        '''Main execution method.'''
+        """Main execution method."""
         self.args.func()

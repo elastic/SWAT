@@ -19,7 +19,7 @@ DEFAULT_EMULATION_ARTIFACTS_DIR = ROOT_DIR / 'swat' / 'etc' / 'artifacts'
 
 @dataclass
 class BaseCreds:
-    '''Based creds class for Google Workspace oauth and service accounts.'''
+    """Based creds class for Google Workspace oauth and service accounts."""
 
     def to_dict(self):
         return dataclasses.asdict(self)
@@ -27,7 +27,7 @@ class BaseCreds:
 
 @dataclass
 class ServiceAccountCreds(BaseCreds):
-    '''Data class for service account credentials.'''
+    """Data class for service account credentials."""
 
     auth_provider_x509_cert_url: str
     auth_uri: str
@@ -48,7 +48,7 @@ class ServiceAccountCreds(BaseCreds):
 
 @dataclass
 class OAuthCreds(BaseCreds):
-    '''Data class for OAuth2.0 application credentials.'''
+    """Data class for OAuth2.0 application credentials."""
 
     auth_provider_x509_cert_url: str
     auth_uri: str
@@ -91,7 +91,7 @@ class Cred:
 
 @dataclass
 class CredStore:
-    '''Credentials store object.'''
+    """Credentials store object."""
 
     path: Path = field(default=DEFAULT_CRED_STORE_FILE)
     store: dict[str, Cred] = field(default_factory=dict)
@@ -102,7 +102,7 @@ class CredStore:
 
     @property
     def has_sessions(self) -> bool:
-        '''Return a boolean indicating if the creds have sessions.'''
+        """Return a boolean indicating if the creds have sessions."""
         for key, cred in self.store.items():
             if cred.session:
                 return True
@@ -122,7 +122,7 @@ class CredStore:
 
     def add(self, key: str, creds: Optional[CRED_TYPES] = None, session: Optional[Credentials] = None,
             override: bool = False, type: Optional[Literal['oauth', 'service']] = None):
-        '''Add a credential to the store.'''
+        """Add a credential to the store."""
         if key in self.store and not override:
             raise ValueError(f'Value exists for: {key}')
         if isinstance(creds, Path):
@@ -132,7 +132,7 @@ class CredStore:
         logging.info(f'Added {type} cred with key: {key}')
 
     def remove(self, key: str) -> bool:
-        '''Remove cred by key and type.'''
+        """Remove cred by key and type."""
         return self.store.pop(key, None) is not None
 
     def get(self, key: str, validate_type: Optional[Literal['oauth', 'service']] = None,
@@ -152,17 +152,17 @@ class CredStore:
 
     def get_by_client_id(self, client_id: str, validate_type: Optional[Literal['oauth', 'service']] = None,
             missing_error: bool = True) -> Optional[CRED_TYPES]:
-        '''Get cred by client_id.'''
+        """Get cred by client_id."""
         for key, value in self.store.items():
             if value.client_id == client_id:
                 return self.get(key, validate_type, missing_error)
 
     def list_credentials(self) -> list[str]:
-        '''Get the list of creds from the store.'''
+        """Get the list of creds from the store."""
         return [f'{k}{f":{v.creds}" if v.creds else ""}' for k, v in self.store.items()]
 
     def list_sessions(self) -> list[str]:
-        '''Get the list of sessions from the store.'''
+        """Get the list of sessions from the store."""
         sessions = []
         for k, v in self.store.items():
             if v.session:
@@ -175,7 +175,7 @@ class CredStore:
 
 @dataclass
 class SWAT:
-    '''Base object for SWAT.'''
+    """Base object for SWAT."""
 
     config: dict
     cred_store: CredStore = field(default_factory=lambda: CredStore.from_file() or CredStore())

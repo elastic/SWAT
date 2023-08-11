@@ -16,7 +16,7 @@ from ..misc import get_custom_argparse_formatter, validate_args
 
 @dataclass
 class AttackData:
-    '''Dataclass for ATT&CK Emulation'''
+    """Dataclass for ATT&CK Emulation"""
     tactic: str
     technique: list[str]
     _emulation_name: str
@@ -26,11 +26,11 @@ class AttackData:
         return f'{self.tactic}: {", ".join(self.technique)}'
 
     def _raw_technique_details(self) -> dict:
-        '''Get technique details from ATT&CK.'''
+        """Get technique details from ATT&CK."""
         return {t: lookup_technique_by_id(t) for t in self.technique}
 
     def technique_details(self) -> dict:
-        '''Print technique details.'''
+        """Print technique details."""
         all_details = {}
 
         raw = self._raw_technique_details()
@@ -75,32 +75,32 @@ class BaseEmulation:
     @classmethod
     @cache
     def get_attack(cls) -> AttackData:
-        '''Parse tactic and technique from path.'''
+        """Parse tactic and technique from path."""
         _, _, tactic, emulation_name = cls.__module__.split('.')
         techniques = [t.upper() for t in cls.techniques]
         return AttackData(tactic=tactic, technique=techniques, _emulation_name=emulation_name,
                           _emulation_description=cls.parser.description)
 
     def exec_str(self, description: str) -> str:
-        '''Return standard execution log string.'''
+        """Return standard execution log string."""
         return f'Executing emulation for: [{self.attack_data}] {description}'
 
     @classmethod
     def help(cls):
-        '''Return the help message for the command.'''
+        """Return the help message for the command."""
         assert cls.parser, '"parser" must be implemented in each emulation command class'
         return cls.parser.format_help()
 
     @classmethod
     def load_parser(cls, *args, **kwargs) -> argparse.ArgumentParser:
-        '''Return custom parser.'''
+        """Return custom parser."""
         return get_custom_argparse_formatter(*args, **kwargs)
 
     @classmethod
-    def load_emulation_config(self) -> Optional[dict]:
-        '''Load YAML config file for emulation.'''
+    def load_emulation_config(cls) -> Optional[dict]:
+        """Load YAML config file for emulation."""
         # Determine the path to the corresponding YAML file
-        emulation_path = Path(self.__module__.replace('.', '/'))
+        emulation_path = Path(cls.__module__.replace('.', '/'))
         config_file_path = emulation_path.with_suffix('.yaml')
 
         # Load the YAML file if it exists
@@ -110,8 +110,9 @@ class BaseEmulation:
             return None
 
     @classmethod
-    def setup_artifacts_folder(self) -> Path:
-        '''Create the artifacts folder if it doesn't exist.'''
+    def setup_artifacts_folder(cls) -> Path:
+        """Create the artifacts folder if it doesn't exist."""
         DEFAULT_EMULATION_ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
-        return DEFAULT_EMULATION_ARTIFACTS_DIR
+        # TODO: fix
         self.logger.info(f'Artifacts folder created: {DEFAULT_EMULATION_ARTIFACTS_DIR}')
+        return DEFAULT_EMULATION_ARTIFACTS_DIR

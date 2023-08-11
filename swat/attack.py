@@ -14,7 +14,7 @@ ATTACK_PATH = ETC_DIR / 'enterprise-attack.json.gz'
 
 
 def download_attack_data(save: bool = True) -> (Optional[dict], Optional[bytes]):
-    '''Refresh ATT&CK data from Mitre.'''
+    """Refresh ATT&CK data from Mitre."""
 
     def get_version_from_tag(name, pattern='att&ck-v'):
         _, version = name.lower().split(pattern, 1)
@@ -50,7 +50,7 @@ def download_attack_data(save: bool = True) -> (Optional[dict], Optional[bytes])
 
 @lru_cache(maxsize=1)
 def load_attack_data() -> dict:
-    '''Load the ATT&CK data from local file.'''
+    """Load the ATT&CK data from local file."""
     gzip_file_path = ETC_DIR / 'enterprise-attack.json.gz'
     if not gzip_file_path.exists():
         download_attack_data()
@@ -62,7 +62,7 @@ def load_attack_data() -> dict:
 
 @lru_cache(maxsize=128)
 def lookup_technique_by_id(technique_id: str) -> Optional[dict]:
-    '''Look up a technique by ID in ATT&CK enterprise data.'''
+    """Look up a technique by ID in ATT&CK enterprise data."""
     data = load_attack_data()['data']
     for item in data['objects']:
         if item['type'] == 'attack-pattern':

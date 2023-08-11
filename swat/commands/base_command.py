@@ -20,10 +20,10 @@ class BaseCommand:
 
     @classmethod
     def custom_help(cls) -> str:
-        '''Return custom help string.'''
+        """Return custom help string."""
         raise NotImplementedError('The "custom_help" method must be implemented in each command class.')
 
     @classmethod
     def load_parser(cls, *args, **kwargs) -> argparse.ArgumentParser:
-        '''Return custom parser.'''
+        """Return custom parser."""
         return get_custom_argparse_formatter(*args, **kwargs)
