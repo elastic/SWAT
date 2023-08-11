@@ -35,6 +35,7 @@ class Emulation(BaseEmulation):
         c.drawString(100, 100, "SWAT generated PDF")
         c.save()
         packet.seek(0)
+        self.elogger.info(f'Created PDF with embedded javascript')
         return packet
 
     def create_email(self, attachment: io.BytesIO) -> dict:
@@ -48,11 +49,13 @@ class Emulation(BaseEmulation):
         attachment = MIMEApplication(attachment.read(), name=f'{self.args.attachment}.pdf')
         attachment.add_header('Content-Disposition', 'attachment', filename=f'{self.args.attachment}.pdf')
         message.attach(attachment)
+        self.elogger.info(f'Created email and attached PDF')
         return {'raw': base64.urlsafe_b64encode(message.as_bytes()).decode()}
 
     def send_email(self, email: dict) -> None:
         '''Send the email.'''
         self.service.users().messages().send(userId='me', body=email).execute()
+        self.elogger.info(f'Sent email to {self.args.recipient} from {self.args.sender} with subject {self.args.subject}')
 
     def execute(self) -> None:
         self.elogger.info(self.exec_str(self.parser.description))

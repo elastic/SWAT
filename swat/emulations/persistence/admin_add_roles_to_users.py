@@ -5,7 +5,7 @@ from swat.emulations.base_emulation import BaseEmulation
 class Emulation(BaseEmulation):
 
     parser = BaseEmulation.load_parser(description='Add privileged roles to a user.')
-    parser.add_argument('session_key', required=True, default='default', help='Session to use for service building API service')
+    parser.add_argument('session_key', default='default', help='Session to use for service building API service')
     parser.add_argument('--username', required=True, help='Username to add the role to')
     parser.add_argument('--roles', required=True, help='Roles to add')
 

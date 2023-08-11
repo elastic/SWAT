@@ -11,7 +11,7 @@ from .base import SWAT
 from .commands.base_command import BaseCommand
 from .commands.emulate import Command as EmulateCommand
 from .misc import CustomHelpFormatter, colorful_swat
-from .utils import clear_terminal
+from .utils import clear_terminal, format_scopes
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 COMMANDS_DIR = ROOT_DIR / 'swat' / 'commands'
@@ -43,6 +43,7 @@ class SWATShell(cmd.Cmd):
 
         self.args = args
         self.obj = SWAT(CONFIG)
+        #self.obj.config['google']['scopes'] = format_scopes(self.obj.config['google']['scopes'])
 
         self._command_name = None
         self._new_args = None

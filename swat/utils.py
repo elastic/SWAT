@@ -7,7 +7,7 @@ import sys
 import zipfile
 from pathlib import Path
 from typing import List, Optional, Union
-import textwrap
+from textwrap import wrap
 
 import requests
 import yaml
@@ -131,3 +131,7 @@ def get_chromedriver(chromedriver_path: Optional[Path] = None) -> webdriver.Chro
     driver = webdriver.Chrome(service=service, options=options)
 
     return driver
+
+def format_scopes(scopes: List[str]) -> List[str]:
+    """Format a list of scopes for display."""
+    return [f'https://www.googleapis.com/auth/{scope}' for scope in scopes]
