@@ -106,8 +106,6 @@ class BaseEmulation:
         # Load the YAML file if it exists
         if config_file_path.exists():
             return yaml.safe_load(config_file_path.read_text())
-        else:
-            return None
 
     @classmethod
     def setup_artifacts_folder(cls) -> Path:
