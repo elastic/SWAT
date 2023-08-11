@@ -28,13 +28,13 @@ class Emulation(BaseEmulation):
         self.service = build('gmail', 'v1', credentials=self.obj.cred_store.store[self.args.session_key].session)
 
     def create_html(self) -> io.BytesIO:
-        '''Create an HTML file with embedded javascript.'''
+        """Create an HTML file with embedded javascript."""
         js = '<script>alert("Embedded JavaScript by SWAT!");</script>'
         html_content = f'<html><head></head><body>{js}</body></html>'
         return io.BytesIO(bytes(html_content, 'utf-8'))
 
     def create_email(self, attachment: io.BytesIO) -> dict:
-        '''Create the email.'''
+        """Create the email."""
         body = 'SWAT generated email with HTML attachment.'
         message = MIMEMultipart()
         message['to'] = self.args.recipient
@@ -51,7 +51,7 @@ class Emulation(BaseEmulation):
         return {'raw': base64.urlsafe_b64encode(message.as_bytes()).decode()}
 
     def send_email(self, email: dict) -> None:
-        '''Send the email.'''
+        """Send the email."""
         self.service.users().messages().send(userId='me', body=email).execute()
         self.elogger.info(f'Sent email to {self.args.recipient} from {self.args.sender}')
         self.elogger.info(f'Email subject: {self.args.subject}')

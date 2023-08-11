@@ -57,7 +57,7 @@ def load_subparsers(parser: argparse.ArgumentParser, dest: str = 'subcommand') -
         return action.choices
 
 def render_table(data: List[str], headers: List[str], table_format="fancy_grid", max_width=30):
-    '''Renders a table from the provided data and headers, wrapping text if it exceeds max_width.'''
+    """Renders a table from the provided data and headers, wrapping text if it exceeds max_width."""
 
     def wrap_text(text):
         '''Wrap text if it exceeds max_width.'''
