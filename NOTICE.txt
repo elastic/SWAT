@@ -1,0 +1,2 @@
+SWAT
+Copyright 2009-2023 Elastic, N.V.
