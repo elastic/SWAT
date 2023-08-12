@@ -12,7 +12,7 @@ from swat.emulations.base_emulation import BaseEmulation
 class Emulation(BaseEmulation):
 
     parser = BaseEmulation.load_parser(description='Sends a phishing email to a user with a HTML attachment.')
-    parser.add_argument('session_key', default='default', help='Session to use for service building API service')
+    parser.add_argument('--creds', default='default', help='Session to use for service building API service')
     parser.add_argument('--recipient', required=True, help='Recipient email address')
     parser.add_argument('--sender', required=True, help='Sender email address')
     parser.add_argument('--subject', default='Phishing Test Email', help='Email subject')
@@ -20,12 +20,13 @@ class Emulation(BaseEmulation):
 
     techniques = ['T1566.001', 'T1204.002']
     name = 'Send HTML with Embedded Javascript with Gmail'
-    scopes = ['gmail.send','gmail.readonly','gmail.compose']
+    scopes = ['gmail.send', 'gmail.readonly','gmail.compose']
     services = ['gmail']
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.service = build('gmail', 'v1', credentials=self.obj.cred_store.store[self.args.session_key].session)
+        creds = self.obj.cred_store.get(self.args.creds, validate_type='oauth')
+        self.service = build('gmail', 'v1', credentials=creds.session(scopes=self.scopes))
 
     def create_html(self) -> io.BytesIO:
         """Create an HTML file with embedded javascript."""

@@ -1,4 +1,5 @@
 
+import copy
 import dataclasses
 import logging
 import pickle
@@ -6,15 +7,19 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Literal, Union
 
-import json
 from google.auth.transport.requests import Request
+from google.oauth2.service_account import Credentials as ServiceCredentials
 from google.oauth2.credentials import Credentials
 
-from .utils import ROOT_DIR, PathlibEncoder
+import json
+import yaml
+
+from .utils import ROOT_DIR, deep_merge
 
 
 DEFAULT_CRED_STORE_FILE = ROOT_DIR / 'swat' / 'etc' / '.cred_store.pkl'
 DEFAULT_EMULATION_ARTIFACTS_DIR = ROOT_DIR / 'swat' / 'etc' / 'artifacts'
+DEFAULT_CUSTOM_CONFIG_PATH = ROOT_DIR / 'swat' / 'etc' / 'custom_config.yaml'
 
 
 @dataclass
@@ -73,17 +78,21 @@ CRED_TYPES = Union[OAuthCreds, ServiceAccountCreds]
 class Cred:
 
     creds: Optional[CRED_TYPES]
-    session: Optional[Credentials]
+
+    def session(self, scopes: Optional[list[str]] = None) -> Optional[Credentials]:
+        if isinstance(self.creds, OAuthCreds):
+            session = Credentials.from_authorized_user_info(self.creds.to_dict(), scopes=scopes)
+        else:
+            session = ServiceCredentials.from_service_account_info(self.creds.to_dict(), scopes=scopes)
+
+        if session.expired and session.refresh_token:
+            session.refresh(Request())
+        return session
 
     @property
     def client_id(self) -> Optional[str]:
         if self.creds and hasattr(self.creds, 'client_id'):
             return self.creds.client_id
-
-    def refreshed_session(self) -> Optional[Credentials]:
-        if self.session and self.session.expired and self.session.refresh_token:
-            self.session.refresh(Request())
-        return self.session
 
     def to_dict(self):
         return {k: v for k, v in dataclasses.asdict(self).items() if not k.startswith('_')}
@@ -100,14 +109,6 @@ class CredStore:
         if not isinstance(self.path, Path):
             self.path = Path(self.path)
 
-    @property
-    def has_sessions(self) -> bool:
-        """Return a boolean indicating if the creds have sessions."""
-        for key, cred in self.store.items():
-            if cred.session:
-                return True
-        return False
-
     @classmethod
     def from_file(cls, file: Path = DEFAULT_CRED_STORE_FILE) -> Optional['CredStore']:
         if file.exists():
@@ -118,21 +119,21 @@ class CredStore:
         logging.info(f'Saved cred store to {self.path}')
         self.path.write_bytes(pickle.dumps(self))
 
-    def add(self, key: str, creds: Optional[CRED_TYPES] = None, session: Optional[Credentials] = None,
-            override: bool = False, type: Optional[Literal['oauth', 'service']] = None):
+    def add(self, key: str, creds: Optional[CRED_TYPES] = None, override: bool = False,
+            cred_type: Optional[Literal["oauth", "service"]] = None):
         """Add a credential to the store."""
         if key in self.store and not override:
             raise ValueError(f'Value exists for: {key}')
 
-        cred = Cred(creds=creds, session=session)
+        cred = Cred(creds=creds)
         self.store[key] = cred
-        logging.info(f'Added {type} cred with key: {key}')
+        logging.info(f'Added {cred_type} cred with key: {key}')
 
     def remove(self, key: str) -> bool:
         """Remove cred by key and type."""
         return self.store.pop(key, None) is not None
 
-    def get(self, key: str, validate_type: Optional[Literal['oauth', 'service']] = None,
+    def get(self, key: str, validate_type: Optional[Literal["oauth", "service"]] = None,
             missing_error: bool = True) -> Optional[Cred]:
         value = self.store.get(key)
         creds = value.creds
@@ -156,23 +157,35 @@ class CredStore:
 
     def list_credentials(self) -> list[str]:
         """Get the list of creds from the store."""
-        return [f'{k}{f":{v.creds}" if v.creds else ""}' for k, v in self.store.items()]
+        return [f'{k}:{v.creds.__class__.__name__}:{v.creds.project_id}' for k, v in self.store.items()]
 
-    def list_sessions(self) -> list[str]:
-        """Get the list of sessions from the store."""
-        sessions = []
-        for k, v in self.store.items():
-            if v.session:
-                if 'service' in v.session.__module__:
-                    sessions.append(f'{k}:{v.session.__module__}:{v.session.service_account_email}')
-                else:
-                    sessions.append(f'{k}:{v.session.__module__}:{v.session.client_id}')
-        return sessions
+
+class Config:
+    """Config class for handling config and custom_config."""
+
+    def __init__(self, path: Path, custom_path: Optional[Path] = DEFAULT_CUSTOM_CONFIG_PATH):
+        self.path = path
+        self.custom_path = custom_path
+
+        assert path.exists(), f'Config file not found: {path}'
+        self.config = yaml.safe_load(path.read_text())
+
+        self.custom_config = yaml.safe_load(custom_path.read_text()) if custom_path.exists() else {}
+
+    @property
+    def merged(self) -> dict:
+        """Safely retrieve a fresh merge of primary and custom configs."""
+        # I regret nothing
+        config = copy.deepcopy(self.config)
+        return deep_merge(config, self.custom_config)
+
+    def save_custom(self):
+        self.custom_path.write_text(yaml.dump(self.custom_config))
 
 
 @dataclass
 class SWAT:
     """Base object for SWAT."""
 
-    config: dict
+    config: Config
     cred_store: CredStore = field(default_factory=lambda: CredStore.from_file() or CredStore())

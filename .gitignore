@@ -87,3 +87,4 @@ logs/*
 
 # etc
 swat/etc/*chrome*
+swat/etc/custom_config.yaml

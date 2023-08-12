@@ -60,7 +60,7 @@ class BaseEmulation:
         self.obj = obj
         self.logger = logging.getLogger(__name__)
         emulation_name = '.'.join(self.__module__.split('.')[2:])
-        self.elogger = configure_emulation_logger(emulation_name, obj.config)
+        self.elogger = configure_emulation_logger(emulation_name, obj.config.merged)
         self.econfig = self.load_emulation_config()
         self.attack_data = self.get_attack()
         self.artifacts_path = self.setup_artifacts_folder()
