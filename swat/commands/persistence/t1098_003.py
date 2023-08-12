@@ -72,7 +72,7 @@ class Command(BaseCommand):
 
             # Remove the user from the group
             self.logger.info(f"Removing user '{self.config['user_info']['primaryEmail']}' from group '{self.config['role_name']}'.")
-            service.members().delete(groupKey=f"{self.config['role_name']}@dejesusarcheology.com", memberKey=self.config['user_info']['primaryEmail']).execute()
+            service.members().delete(groupKey=f"{self.config['role_name']}domain.com", memberKey=self.config['user_info']['primaryEmail']).execute()
             time.sleep(3)  # Wait for the user to be removed
 
             # Delete the user
