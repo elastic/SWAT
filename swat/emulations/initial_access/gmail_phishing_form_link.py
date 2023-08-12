@@ -39,11 +39,11 @@ class Emulation(BaseEmulation):
                                                #body=self.econfig['form']['questions']['last_name']).execute()
         #self.forms_service.forms().batchUpdate(formId=form["formId"],
                                                #body=self.econfig['form']['questions']['social_security_number']).execute()
-        form_update = {"title": self.econfig['form']['title'],
-                       "description": self.econfig['form']['description'],
-                       "questions": self.econfig['form']['questions']}
-        self.forms_service.forms().batchUpdate(formId=form["formId"],
-                                                    body=form_update).execute()
+        #form_update = {"title": self.econfig['form']['title'],
+                       #"description": self.econfig['form']['description'],
+                       #"questions": self.econfig['form']['questions']}
+        #self.forms_service.forms().batchUpdate(formId=form["formId"],
+                                                    #body=form_update).execute()
         self.elogger.info(f'Created Google Form: {form["formId"]}')
         return form['formId']
 
