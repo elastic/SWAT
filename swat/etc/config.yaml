@@ -1,16 +1,31 @@
 google:
   scopes:
-    - https://www.googleapis.com/auth/admin.directory.user
-mitre:
-  tactics:
-    - collection
-    - credential_access
-    - defense_evasion
-    - initial_access
+    - admin.directory.user
+    - admin.reports.audit.readonly
+    - drive.file
+    - drive.readonly
+    - drive
+    - gmail.send
+    - gmail.readonly
+    - gmail.compose
+  audit:
+    columns:
+      - type
+      - name
+      - id
+      - date
+      - time
+      - event
+      - description
+      - actor
+      - address
+      - value
+  domain: NULL
 logging:
   level: info
   format: text
   output: stdout
-  path: swat.log
-  log_file_format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  log_file_format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
   log_console_format: "%(asctime)s - %(message)s"
+settings:
+  save_on_exit: true

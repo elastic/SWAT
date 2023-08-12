@@ -64,16 +64,26 @@ venv.bak/
 *.pkl
 *.csv
 *.h5
+*.ndjson
 
-# Tokens
+# Tokens & creds
 *token.json
 *token.pickle
 *.pem
 *credentials.json
+*.json
+/credentials
+/credentials/*
+*.cred_store.json
 
 # Logging
+logs/
 logs/*
 *.log
 
-# Staged artifacts
-staging/*
+# artifacts
+/swat/etc/artifacts
+/swat/etc/artifacts/*
+
+# etc
+swat/etc/*chrome*

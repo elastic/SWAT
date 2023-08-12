@@ -1,13 +1,13 @@
 ---
-name: 🐍 Python Module for MITRE ATT&CK Technique Detection
-about: Suggest a new Python module that detects a specific MITRE ATT&CK technique against Google Workspace
-title: "[Feature Request] Add Python module for detecting [Technique Name]"
+name: 🐍 Add New Emulation Module
+about: Suggest a new Python module that emulates a MITRE ATT&CK technique or adversary playbook against Google Workspace
+title: "[Feature Request] Add emulation module for [Technique]"
 labels: enhancement, python, module, Google Workspace
 assignees: ''
 
 ---
 
-## 🐍 Python Module for MITRE ATT&CK Technique Detection
+## 🐍 Add New Emulation Module
 
 **Technique Name:** [Enter the name of the MITRE ATT&CK technique]
 
@@ -17,11 +17,11 @@ assignees: ''
 
 ### Is your feature request related to a problem? Please describe.
 
-A clear and concise description of what the problem is. For example, "I'm always frustrated when [...]"
+A clear and concise description of what the emulation module is attempting to achieve. For example, "This module attempts to emulate..."
 
 ### Describe the solution you'd like
 
-A clear and concise description of what you want to happen. Please provide as much detail as possible about the Python module, including any specific libraries or APIs you would like it to use, the expected inputs and outputs, and any additional functionality that should be included.
+A clear and concise description of what emulation your attempting to achieve. Please provide as much detail as possible about the Python module, including any specific libraries or APIs you would like it to use, the expected inputs and outputs, and any additional functionality that should be included.
 
 ### Describe alternatives you've considered
 

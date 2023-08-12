@@ -4,7 +4,7 @@
   <h1>SWAT - Simple Workspace ATT&CK Tool</h1>
 
   <p>
-    SWAT is a simple red teaming tool designed specifically for red teaming exercises against Google Workspace environments.
+    SWAT is a simple attack tool designed specifically for red teaming exercises against Google Workspace environments.
   </p>
 
 <!-- Badges -->
@@ -26,6 +26,8 @@
 
 SWAT maps closely to the MITRE ATT&CK framework, providing an interactive command-line interface and shell to simulate cyber attacks and evaluate the effectiveness of an organization's security controls. Built with Python, YAML, and GoLang, this tool helps penetration testers, security professionals, and ethical hackers simulate the malicious behavior of adversaries against Google Workspace environments.
 
+https://github.com/elastic/SWAT/assets/99630311/6436071f-2bdd-4d09-917e-b2b6795743c7
+
 ## Features
 
 - Interactive command-line interface and shell
@@ -40,4 +42,4 @@ SWAT maps closely to the MITRE ATT&CK framework, providing an interactive comman
 To get started, navigate to the SWAT [wiki](https://github.com/elastic/SWAT/wiki).
 
 ## Disclaimer
-Obtain the proper authorization before using SWAT in an environment that you do not own and administer. Users take full responsibility for the outcomes of using SWAT. SWATis licensed under [Apache License Version 2.0](LICENSE.txt).
+Obtain the proper authorization before using SWAT in an environment that you do not own and administer. Users take full responsibility for the outcomes of using SWAT. SWAT is licensed under [Apache License Version 2.0](LICENSE.txt).

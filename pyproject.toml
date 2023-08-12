@@ -1,0 +1,47 @@
+[tool.poetry]
+name = "swat"
+version = "0.0.1"
+description = "Simple Workspace Attack Tool for emulating against Google Workspace environments."
+authors = ["Terrance DeJesus <contact@dejesus.io>"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/elastic/SWAT"
+repository = "https://github.com/elastic/SWAT"
+documentation = "https://github.com/elastic/SWAT/wiki"
+keywords = ["swat", "red-teaming", "Google Workspace", "security"]
+classifiers = [
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Security",
+    "Topic :: Google Workspace",
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+colorama = "^0.4.6"
+google-auth = "^2.19.1"
+google-auth-oauthlib = "^1.0.0"
+google-auth-httplib2 = "^0.1.0"
+google-api-python-client = "^2.88.0"
+PyYAML = "^6.0"
+requests = "^2.30.0"
+semver = "3.0.1"
+tabulate = "0.9.0"
+pandas = { version = "2.0.2", optional = true }
+selenium = "^4.11.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.extras]
+audit_support = ["pandas"]
+
+[tool.poetry.scripts]
+swat = 'swat.main:main'
