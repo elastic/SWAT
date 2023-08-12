@@ -81,7 +81,7 @@ class Cred:
 
     def session(self, scopes: Optional[list[str]] = None) -> Optional[Credentials]:
         if isinstance(self.creds, OAuthCreds):
-            session = Credentials.from_authorized_user_info(str(self.creds.to_dict()), scopes=scopes)
+            session = Credentials.from_authorized_user_info(self.creds.to_dict(), scopes=scopes)
         else:
             session = ServiceCredentials.from_service_account_info(self.creds.to_dict(), scopes=scopes)
 
