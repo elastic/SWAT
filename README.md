@@ -15,9 +15,15 @@
 
 
 <h5>
-    <a href="https://github.com/elastic/SWAT/issues/">Report Bug</a>
+    <a href="https://github.com/elastic/SWAT/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title=%5BBug%5D+Brief+description+of+the+bug">Report Bug</a>
   <span> · </span>
-    <a href="https://github.com/elastic/SWAT/issues/">Request Feature</a>
+    <a href="https://github.com/elastic/SWAT/issues/new?assignees=&labels=enhancement%2C+python%2C+module%2C+Google+Workspace&projects=&template=module_feature_request.md&title=%5BFeature+Request%5D+Add+emulation+module+for+%5BTechnique%5D">Emulation Request</a>
+  <span> · </span>
+    <a href="https://github.com/elastic/SWAT/issues/new?assignees=&labels=enhancement%2C+python%2C+module%2C+Google+Workspace&projects=&template=command_feature_request.md&title=%5BFeature+Request%5D+Add+command+module+for+%5BCommand%5D">Command Request</a>
+  <span> · </span>
+    <a href="https://github.com/elastic/SWAT/issues/new?assignees=&labels=enhancement%2C+core-code%2C+feature-request&projects=&template=feature_request.md&title=%5BFeature+Request%5D+Feature%2FUpdate+Request+for+SWAT">Feature Request</a>
+  <span> · </span>
+    <a href="https://github.com/elastic/SWAT/issues/new?assignees=&labels=other&projects=&template=other.md&title=%5BOther%5D+Brief+description+of+the+issue">Other</a>
   </h5>
 </div>
 
