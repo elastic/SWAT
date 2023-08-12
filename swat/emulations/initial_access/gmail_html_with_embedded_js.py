@@ -10,7 +10,6 @@ from swat.emulations.base_emulation import BaseEmulation
 
 
 class Emulation(BaseEmulation):
-
     parser = BaseEmulation.load_parser(description='Sends a phishing email to a user with a HTML attachment.')
     parser.add_argument('session_key', default='default', help='Session to use for service building API service')
     parser.add_argument('--recipient', required=True, help='Recipient email address')

@@ -1,0 +1,49 @@
+form:
+  title: "Winning Giveaway Form"
+  add_description:
+    requests:
+      - updateFormInfo:
+          info:
+            description: "Fill out to claim your prize!"
+          updateMask: description
+  questions:
+    first_name:
+      item:
+        title: "First Name"
+        questionItem:
+          question:
+            required: true
+            textQuestion:
+              paragraph: False
+    last_name:
+      item:
+        title: "First Name"
+        questionItem:
+          question:
+            required: true
+            textQuestion:
+              paragraph: False
+    social_security_number:
+      item:
+        title: "First Name"
+        questionItem:
+          question:
+            required: true
+            textQuestion:
+              paragraph: False
+  make_quiz:
+    requests:
+      - updateSettings:
+          settings:
+            quizSettings:
+              isQuiz: true
+          updateMask: quizSettings.isQuiz
+
+item:
+  title: "First Name"
+  questionItem:
+    question:
+      required: true
+      textQuestion:
+        paragraph: False
+
