@@ -41,7 +41,8 @@ class Command(BaseCommand):
             else:
                 creds = OAuthCreds.from_file(self.args.creds) if self.args.creds else None
 
-            self.obj.cred_store.add(self.args.key, creds=creds, override=self.args.override)
+            cred_type = 'service' if self.args.service_account else 'oauth'
+            self.obj.cred_store.add(self.args.key, creds=creds, override=self.args.override, cred_type=cred_type)
             self.logger.info(f'Credentials added with key: {self.args.key}')
         except TypeError as e:
             self.logger.info(f'Invalid credentials file: {self.args.creds} - {e}')

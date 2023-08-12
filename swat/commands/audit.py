@@ -41,6 +41,7 @@ class KeyValueAction(argparse.Action):
                 raise argparse.ArgumentError(self, f'invalid filter argument "{value}", expected "key=value"')
             setattr(namespace, self.dest, {key: val})
 
+
 @dataclass
 class Filters:
     """Dataclass representing a set of filters."""
@@ -68,10 +69,13 @@ class Command(BaseCommand):
     parser = get_custom_argparse_formatter(prog='audit', description='Google Workspace Audit')
     parser.add_argument('application', help='Application name')
     parser.add_argument('duration', help='Duration in format Xs, Xm, Xh or Xd.')
-    parser.add_argument('--columns', nargs='+', help='Columns to keep in the output. If not set, will take columns from config.')
+    parser.add_argument('--columns', nargs='+',
+                        help='Columns to keep in the output. If not set, will take columns from config.')
     parser.add_argument('--export', action='store_true', default=False, help='Path to export the data')
-    parser.add_argument('--export-format', choices=['csv', 'ndjson'], default='csv', help='Export format. Default is csv.')
-    parser.add_argument('--filters', nargs='*', action=KeyValueAction, dest='filters', default={}, help='Filters to apply on the data')
+    parser.add_argument('--export-format', choices=['csv', 'ndjson'], default='csv',
+                        help='Export format. Default is csv.')
+    parser.add_argument('--filters', nargs='*', action=KeyValueAction, dest='filters', default={},
+                        help='Filters to apply on the data')
     parser.add_argument('--interactive', action='store_true', help='Interactive mode')
 
     def __init__(self, **kwargs) -> None:
@@ -89,7 +93,7 @@ class Command(BaseCommand):
 
         # Check if the session exists in the credential store
         if self.obj.cred_store.store.get('default') is None:
-            self.logger.error(f'Please authenticate with "auth session --default --creds" before running this command.')
+            self.logger.error(f'Please add "default" creds with "creds add default ..." before running this command.')
             return
 
         try:
@@ -99,7 +103,8 @@ class Command(BaseCommand):
             return
 
         try:
-            self.service = build('admin', 'reports_v1', credentials=self.obj.cred_store.store['default'].session)
+            creds = self.obj.cred_store.get('default', validate_type='oauth')
+            self.service = build('admin', 'reports_v1', credentials=creds.session())
         except HttpError as err:
             self.logger.error(f'An error occurred: {err}')
             return
@@ -113,7 +118,6 @@ class Command(BaseCommand):
         if self.args.filters:
             self.args.filters = [f.strip('\'"') for f in self.args.filters]
             self.filters = Filters(self.args.filters)
-
 
     def export_data(self, df: pd.DataFrame) -> None:
         """
@@ -134,7 +138,6 @@ class Command(BaseCommand):
             self.logger.info(f'Data exported to {export_path} in NDJSON format.')
         else:
             self.logger.warning(f'Unsupported export format: {self.args.export_format}. No data was exported.')
-
 
     def flatten_json(self, y: dict) -> dict:
         """
@@ -187,7 +190,6 @@ class Command(BaseCommand):
                 flattened_data.append(merged_data)
         return pd.DataFrame(flattened_data)
 
-
     def fetch_data(self) -> pd.DataFrame:
         """
         Fetches the activity data from the Google Workspace Audit service, using the provided start time,
@@ -227,9 +229,14 @@ class Command(BaseCommand):
         Returns:
             pd.DataFrame: The filtered dataframe.
         """
-        columns = self.args.columns or self.obj.config['google']['audit']['columns']
+        columns = self.args.columns or self.obj.config.merged['google']['audit']['columns']
         modified_columns = ['.*' + column + '.*' for column in columns]
-        df = df[[column for column in df.columns for pattern in modified_columns if re.search(pattern, column, re.IGNORECASE)]]
+        df = df[
+            [
+                column for column in df.columns for pattern in modified_columns
+                if re.search(pattern, column, re.IGNORECASE)
+             ]
+        ]
         return df
 
     def interactive_session(self, df: pd.DataFrame, df_unfiltered: pd.DataFrame) -> None:
@@ -244,7 +251,8 @@ class Command(BaseCommand):
             None
         """
         # Ask the user which columns to display
-        selected_columns_input = input('Enter the columns to display, separated by commas (see logged available columns): ')
+        selected_columns_input = input('Enter the columns to display, separated by commas '
+                                       '(see logged available columns): ')
         selected_columns = [column.strip() for column in selected_columns_input.split(',')]
 
         # Keep only the selected columns
@@ -267,7 +275,8 @@ class Command(BaseCommand):
                 except ValueError:
                     self.logger.warning(f'Invalid row number: {row_number}')
 
-    def show_results(self, df: pd.DataFrame) -> None:
+    @staticmethod
+    def show_results(df: pd.DataFrame) -> None:
         """
         Prints the DataFrame to the console in a markdown table format.
 
@@ -278,7 +287,6 @@ class Command(BaseCommand):
             None
         """
         print(Fore.GREEN + df.to_markdown(headers='keys', tablefmt='fancy_grid') + Fore.RESET)
-
 
     def execute(self) -> None:
         """

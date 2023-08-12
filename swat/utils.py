@@ -37,12 +37,14 @@ def load_etc_file(filename: str) -> Union[str, dict]:
     elif path.suffix in ('.yaml', '.yml'):
         return yaml.safe_load(contents)
 
+
 def check_file_exists(file: Path, error_message: str) -> None:
     """Check if the given file exists, raise an error if it does not."""
     if not file.exists():
         raise FileNotFoundError(f'{error_message}: {file}')
     if file.is_dir():
         raise IsADirectoryError(f'{error_message}: {file}')
+
 
 def clear_terminal() -> None:
     """Clear the terminal."""
@@ -67,6 +69,7 @@ def render_table(data: List[str], headers: List[str], table_format="fancy_grid",
     wrapped_headers = [wrap_text(header) for header in headers]
     table = tabulate(table_data, wrapped_headers, tablefmt=table_format)
     return table
+
 
 def download_chromedriver(destination_path: Path) -> Path:
     """Download the appropriate ChromeDriver for the system and return its path."""
@@ -111,6 +114,7 @@ def download_chromedriver(destination_path: Path) -> Path:
 
     return destination_path / 'chromedriver'
 
+
 def get_chromedriver(chromedriver_path: Optional[Path] = None) -> webdriver.Chrome:
     """Return a Chrome WebDriver instance, downloading ChromeDriver if necessary."""
     chromedriver_path = chromedriver_path or ETC_DIR / 'chromedriver'
@@ -122,15 +126,16 @@ def get_chromedriver(chromedriver_path: Optional[Path] = None) -> webdriver.Chro
 
     DEFAULT_EMULATION_ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
     options.add_experimental_option('prefs', {
-    "download.default_directory": str(DEFAULT_EMULATION_ARTIFACTS_DIR), # set the download directory
-    "download.prompt_for_download": False, # disable download prompt
-})
+        "download.default_directory": str(DEFAULT_EMULATION_ARTIFACTS_DIR),  # set the download directory
+        "download.prompt_for_download": False,  # disable download prompt
+    })
     options.add_argument('--headless')  # Run Chrome in headless mode
 
     service = Service(executable_path=str(chromedriver_path))
     driver = webdriver.Chrome(service=service, options=options)
 
     return driver
+
 
 def format_scopes(scopes: Union[str, List[str]]) -> List[str]:
     """Format a list of scopes for display."""
@@ -140,3 +145,13 @@ def format_scopes(scopes: Union[str, List[str]]) -> List[str]:
     else:
         return [f'https://www.googleapis.com/auth/{scope}' for
                 scope in scopes if 'https://www.googleapis.com/auth/' not in scope]
+
+
+def deep_merge(d1, d2):
+    merged = d1.copy()
+    for key, value in d2.items():
+        if key in d1 and isinstance(d1[key], dict) and isinstance(value, dict):
+            merged[key] = deep_merge(d1[key], value)
+        else:
+            merged[key] = value
+    return merged

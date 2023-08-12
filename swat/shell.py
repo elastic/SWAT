@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Optional, Type, TypeVar
 
 from . import utils
-from .base import SWAT
+from .base import SWAT, Config
 from .commands.base_command import BaseCommand
 from .commands.emulate import Command as EmulateCommand
 from .misc import CustomHelpFormatter, colorful_swat
@@ -15,7 +15,7 @@ from .utils import clear_terminal, format_scopes
 
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 COMMANDS_DIR = ROOT_DIR / 'swat' / 'commands'
-CONFIG: dict = utils.load_etc_file('config.yaml')
+CONFIG_FILE = ROOT_DIR / 'swat' / 'etc' / 'config.yaml'
 
 logo = """
 ░██████╗░██╗░░░░░░░██╗░█████╗░████████╗
@@ -31,6 +31,7 @@ T = TypeVar('T', bound=BaseCommand)
 KEY = '\U0001F511'
 USER = '\U0001F464'
 
+
 class SWATShell(cmd.Cmd):
     intro = colorful_swat(logo)
     prompt = 'SWAT> '
@@ -42,13 +43,13 @@ class SWATShell(cmd.Cmd):
             logging.info('Logging in debug mode.')
 
         self.args = args
-        self.obj = SWAT(CONFIG)
-        self.obj.config['google']['scopes'] = format_scopes(self.obj.config['google']['scopes'])
+        config = Config(CONFIG_FILE, args.custom_config)
+        self.obj = SWAT(config)
 
         self._command_name = None
         self._new_args = None
 
-        self.save_on_exit = self.obj.config['settings'].get('save_on_exit', False)
+        self.save_on_exit = self.obj.config.merged['settings'].get('save_on_exit', False)
 
         self._registered_commands = self._register_commands()
 
@@ -172,8 +173,7 @@ class SWATShell(cmd.Cmd):
     def postcmd(self, stop: bool, line: str) -> bool:
         """Handle post-command processing."""
         key = f'{KEY}' if self.obj.cred_store.store else ''
-        session = f'{USER}' if self.obj.cred_store.has_sessions else ''
-        self.prompt = f'SWAT{key}{session}>' if key or session else 'SWAT>'
+        self.prompt = f'SWAT{key}>' if key else 'SWAT>'
         return stop
 
     def default(self, line: str) -> any:
