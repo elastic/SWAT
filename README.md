@@ -48,4 +48,16 @@ https://github.com/elastic/SWAT/assets/99630311/6436071f-2bdd-4d09-917e-b2b67957
 To get started, navigate to the SWAT [wiki](https://github.com/elastic/SWAT/wiki).
 
 ## Disclaimer
+This project is in its early stages of development and should be considered in a pre-alpha or infancy stage. The codebase, features, and overall functionality are under active development, and there will be many updates, changes, and enhancements in the foreseeable future.
+
+While we believe in transparency and inclusivity, and we're excited to share our project and roadmap with the community, we want to be clear that certain features may be incomplete, or the software may exhibit unexpected behaviors. Therefore, the use of this software in a production environment or for critical applications is not recommended at this stage.
+
+We warmly welcome contributions, feedback, and community engagement. Feel free to explore the code, experiment with it, and contribute to its development. 
+
+We're committed to creating a simple but efficient tool for emulation in Google Workspace while in parrellel conducting threat research in this ecostystem, and as such, we'll be regularly updating the code and communicating changes through issues and discussions. However, please note that as the project evolves, certain features may be altered, deprecated, or removed.
+
+Your understanding and participation in this early phase are highly appreciated. For any questions, concerns, or suggestions, please feel free to open an issue or contact us directly.
+
+Thank you for your interest in our project, and we look forward to building something great together!
+
 Obtain the proper authorization before using SWAT in an environment that you do not own and administer. Users take full responsibility for the outcomes of using SWAT. SWAT is licensed under [Apache License Version 2.0](LICENSE.txt).
