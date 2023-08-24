@@ -87,3 +87,21 @@ logs/*
 
 # etc
 swat/etc/*chrome*
+
+# Sphinx documentation
+_build/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+*.egg
+.eggs/
+**/__pycache__/
+*.swp
+*.swo
+*.swn
+*.toc
+*.bak
+*.cache
+*.doctree
+*.pickle
