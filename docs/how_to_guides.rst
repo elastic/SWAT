@@ -69,6 +69,16 @@ Service Accounts
 
 Service accounts are a way to programmatically interact with APIs, typically for backend purposes. Regarding Google Workspace, GCP and SWAT, they allow us to interact with APIs without human interaction for the OAuth workflow, thus allowing the workflow to be purely programmatic. However, SWAT allows for service accounts to be used during emulations to avoid excessive OAuth consent screen requirements if multiple users are used in an emulation. The following workflow can be used to add service account credentials, authenticate and use them in an emulation.
 
+If not done already, domain-wide delegation must be enabled and setup for this service account. This is required to impersonate users in the domain and make API calls on their behalf. For more information on domain-wide delegation, please visit `Google's Delegating Authority documentation <https://developers.google.com/identity/protocols/oauth2/service-account#delegatingauthority>`_. This will require you to first do the following:
+
+1. Create a service account in the `Google Cloud Console <https://console.cloud.google.com/>`_.
+2. Assign the service account a role of **Project Owner** or a custom role of choice.
+3. Enable **Domain-wide Delegation** for the service account in Google Workspace's `Admin Console <https://admin.google.com>`_.
+4. Specify the OAuth scopes for the service account in the Admin Console. For SWAT, OOTB emulation scopes required can be found in `/etc/config.yaml`.
+5. Authorize the service account in the Admin Console to access the APIs you want to use. For SWAT, this will be the Google Workspace APIs you want to interact with.
+
+Once complete, you may continue to the following workflows, however be aware that if scopes need to be adjusted, they must be adjusted based on the IAM role assigned and within the domain-wide delegation settings in the Admin Console.
+
 **Workflow #1**
 
 1. Acquire Service Account Credentials:

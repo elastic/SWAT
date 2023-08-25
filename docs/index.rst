@@ -9,7 +9,7 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-   :caption: Overview:
+   :caption: Documentation
 
    ../README
    prerequisites

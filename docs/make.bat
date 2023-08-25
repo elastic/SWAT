@@ -23,6 +23,9 @@ if errorlevel 9009 (
 	exit /b 1
 )
 
+echo Copying README.rst ...
+copy ..\README.rst .
+
 if "%1" == "" goto help
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
