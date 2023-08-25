@@ -2,7 +2,7 @@
 SWAT (Simple Workspace ATT&CK Tool)
 ====================================
 
-.. image:: https://readthedocs.org/projects/{project_name}/badge/?version=latest
+.. image:: https://readthedocs.org/projects/swat/badge/?version=latest
    :target: https://swat.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
