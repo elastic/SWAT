@@ -21,6 +21,7 @@ Contents:
    how_to_guides
    contributing
    developers
+   CHANGELOG
 
 
 Indices and tables

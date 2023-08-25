@@ -79,6 +79,11 @@ Support
 
 Encountering issues? Reach out! Initiate a `discussion <https://github.com/elastic/SWAT/discussions>`_ on our GitHub repository.
 
+Stay Updated
+============
+
+Stay updated about SWAT's latest developments by visiting our `CHANGELOG <https://swat.readthedocs.io/en/latest/changelog.html>`_.
+
 Disclaimer
 ==========
 
