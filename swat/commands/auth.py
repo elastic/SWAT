@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
     parser_session = subparsers.add_parser('session', description='Authenticate with Google Workspace (default oauth)',
                                            help='Authenticate with Google Workspace (default oauth)')
-    parser_session.add_argument('--key', help='Name of key to store the creds under')
+    parser_session.add_argument('--key', help='Name of key to use from credential store')
     parser_session.add_argument('--creds', type=Path, help='Path to the credentials file')
     parser_session.add_argument('--service-account', action='store_true', help='Authenticate a service account')
     parser_session.add_argument('--store-key', type=str, help='Add authenticated session to credential store with key')
@@ -56,9 +56,9 @@ class Command(BaseCommand):
 
     def authenticate(self) -> Optional[Credentials]:
         """Authenticate with Google Workspace using OAuth2.0."""
+        cred_type = 'service' if self.args.service_account else 'oauth'
         if self.args.key:
-            validate_type = 'service' if self.args.service_account else 'oauth'
-            cred = self.obj.cred_store.get(self.args.key, validate_type=validate_type)
+            cred = self.obj.cred_store.get(self.args.key, validate_type=cred_type)
             self.logger.info(f'Using stored credentials with key: {self.args.key}')
 
             if cred.session:
@@ -74,10 +74,13 @@ class Command(BaseCommand):
             if self.args.service_account:
                 check_file_exists(self.args.creds, f'Missing service account credentials file')
                 self.logger.info(f'Using service account credentials file: {self.args.creds}')
+                cred = ServiceAccountCreds.from_file(self.args.creds)
                 scopes = self.obj.config['google']['scopes']
                 session = Credentials.from_service_account_file(str(self.args.creds), scopes=scopes)
             else:
                 check_file_exists(self.args.creds, f'Missing OAuth2.0 credentials file: {self.args.creds}')
+                self.logger.info(f'Using OAuth2.0 credentials file: {self.args.creds}')
+                cred = OAuthCreds.from_file(self.args.creds)
                 flow = InstalledAppFlow.from_client_secrets_file(str(self.args.creds), self.obj.config['google']['scopes'])
                 session = flow.run_local_server(port=0)
         else:
@@ -86,10 +89,7 @@ class Command(BaseCommand):
 
         self.logger.info(f'Authenticated successfully.' if session else f'Failed to authenticate.')
         if self.args.store_key:
-            creds = self.args.creds
-            cred_type = 'service' if self.args.service_account else 'oauth'
-            creds_obj = OAuthCreds.from_file(creds) if cred_type == 'oauth' else ServiceAccountCreds.from_file(creds)
-            self.obj.cred_store.add(self.args.store_key, creds=creds_obj, session=session, type=cred_type)
+            self.obj.cred_store.add(self.args.store_key, creds=cred, session=session, type=cred_type, override=True)
         return session
 
     def list_sessions(self):

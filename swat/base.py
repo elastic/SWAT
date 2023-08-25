@@ -154,6 +154,8 @@ class CredStore:
 
     def get(self, key: str, validate_type: Optional[Literal['oauth', 'service']] = None,
             missing_error: bool = True) -> Optional[Cred]:
+        if key not in self.store:
+            raise ValueError(f'Value not found for: {key} in the cred store')
         value = self.store.get(key)
         creds = value.creds
         if validate_type and creds:
