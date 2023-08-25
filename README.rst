@@ -51,10 +51,6 @@ Installation
 7. **Link SWAT Command**: Establish a link for the SWAT command as needed.
 8. **Start SWAT Shell**: Launch with `swat` or `poetry run swat`.
 
-   .. image:: _static/swat_shell_started.png
-      :width: 800px
-      :alt: SWAT Shell
-
 Documentation
 =============
 
