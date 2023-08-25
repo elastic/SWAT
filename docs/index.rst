@@ -11,7 +11,7 @@ Contents:
    :maxdepth: 2
    :caption: Documentation
 
-   ../README
+   README
    prerequisites
    getting_started
    auth
