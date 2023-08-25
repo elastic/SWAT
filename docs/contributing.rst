@@ -17,19 +17,19 @@ Open a `🔧 Feature Request/Update <https://github.com/elastic/SWAT/issues/new?
 New Emulation Modules
 +++++++++++++++++++++
 
-Share your emulation module ideas with us by opening an `🐍 Add New Emulation Module issue <https://github.com/elastic/SWAT/issues/new?assignees=&labels=enhancement%2C+python%2C+module%2C+Google+Workspace&projects=&template=module_feature_request.md&title=%5BFeature+Request%5D+Add+emulation+module+for+%5BTechnique%5D>`_. To help you get started with developing a new module, we've prepared a `"add emulations" guide <swat.readthedocs.io/en/latest/emulations.html>`_.
+Share your emulation module ideas with us by opening an `🐍 Add New Emulation Module issue <https://github.com/elastic/SWAT/issues/new?assignees=&labels=enhancement%2C+python%2C+module%2C+Google+Workspace&projects=&template=module_feature_request.md&title=%5BFeature+Request%5D+Add+emulation+module+for+%5BTechnique%5D>`_. To help you get started with developing a new module, we've prepared a `"add emulations" guide <https://swat.readthedocs.io/en/latest/emulations.html>`_.
 
 New Command Modules
 +++++++++++++++++++
 
-If you feel the current command set isn't enough, open an `➕ Adding a New Command Module <https://github.com/elastic/SWAT/issues/new?assignees=&labels=enhancement%2C+python%2C+module%2C+Google+Workspace&projects=&template=command_feature_request.md&title=%5BFeature+Request%5D+Add+command+module+for+%5BCommand%5D>`_ issue. For guidance on developing new commands, refer to our `"add commands" guide <swat.readthedocs.io/en/latest/commands.html>`_.
+If you feel the current command set isn't enough, open an `➕ Adding a New Command Module <https://github.com/elastic/SWAT/issues/new?assignees=&labels=enhancement%2C+python%2C+module%2C+Google+Workspace&projects=&template=command_feature_request.md&title=%5BFeature+Request%5D+Add+command+module+for+%5BCommand%5D>`_ issue. For guidance on developing new commands, refer to our `"add commands" guide <https://swat.readthedocs.io/en/latest/commands.html>`_.
 
 Contributing Code
 -----------------
 
 Getting Started
 +++++++++++++++
-We created a dedicated `getting started guide <swat.readthedocs.io/en/latest/getting-started.html>`_ to help you get up and running with SWAT development. For more information on the SWAT codebase, refer to our `developer documentation <swat.readthedocs.io/en/latest/developers.html>`_.
+We created a dedicated `getting started guide <https://swat.readthedocs.io/en/latest/getting_started.html>`_ to help you get up and running with SWAT development. For more information on the SWAT codebase, refer to our `developer documentation <https://swat.readthedocs.io/en/latest/developers.html>`_.
 
 Making Changes
 ++++++++++++++

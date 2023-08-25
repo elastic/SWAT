@@ -235,7 +235,7 @@ Example Walkthrough:
       def create_raw_email(self):
           ...
 
-9. **Test Your Emulation**: Start SWAT and run your new emulation to ensure it behaves as expected. Remember that you'll need to provide a valid session key and recipient email address. Visit `Authentication with GCP <swat.readthedocs.io/en/latest/getting_started.html>`_ for more information on authentication/authorization.
+9. **Test Your Emulation**: Start SWAT and run your new emulation to ensure it behaves as expected. Remember that you'll need to provide a valid session key and recipient email address. Visit `Authentication with GCP <https://swat.readthedocs.io/en/latest/getting_started.html>`_ for more information on authentication/authorization.
 
    .. code-block:: bash
 

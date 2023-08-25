@@ -214,7 +214,7 @@ If you have any feedback or questions about the architecture or the SWAT framewo
 
 Contribution Process
 --------------------
-Please review the existing `contributions guide <swat.readthedocs.io/en/latest/contributing.html>`_ for more information on how to contribute to SWAT.
+Please review the existing `contributions guide <https://swat.readthedocs.io/en/latest/contributing.html>`_ for more information on how to contribute to SWAT.
 
 Tips and Tricks
 ---------------

@@ -45,7 +45,7 @@ Specific Authentication Steps
 
 As stated, either service account, OAuth, or API credentials will be required from GCP. Once these credentials are saved locally, they can be leveraged by SWAT for interacting with Google Workspace APIs. If you have not already, please review the `Authentication and Authorization` section above.
 
-If your still unsure of what credentials to use or how to authenticate, please review the `authentication and authorization guide <swat.readthedocs.io/en/latest/auth.html>`_.
+If your still unsure of what credentials to use or how to authenticate, please review the `authentication and authorization guide <https://swat.readthedocs.io/en/latest/auth.html>`_.
 
 OAuth
 ^^^^^
@@ -159,7 +159,7 @@ Below is example code of a basic command file:
 
 2. Test New Command: Start a new shell session and run ``help`` to see your new command. Then run ``help COMMAND_NAME`` to see the help menu for your new command. Finally, run ``COMMAND_NAME`` to execute your new command.
 
-For a deeper dive into the command workflow, please visit `Adding a New Command <swat.readthedocs.io/en/latest/commands.html#adding-a-new-command>`_.
+For a deeper dive into the command workflow, please visit `Adding a New Command <https://swat.readthedocs.io/en/latest/commands.html#adding-a-new-command>`_.
 
 Emulations
 ----------
@@ -214,7 +214,7 @@ To add an emulation, drop a ``.py`` file into ``swat/emulations/TACTIC/``. Every
 3. Implement Emulation: Add desired functionality.
 4. Test Emulation: Start a new shell session and run ``help emulate`` to see your new emulation. Then run ``help emulate EMULATION_NAME`` to see the help menu for your new emulation. Finally, run ``emulate EMULATION_NAME ARGUMENTS`` to execute your new emulation.
 
-As shown in the example emulation above, a `service` is necessary to interact with Google Workspace APIs. Each Google Workspace service has their own `dedicated API <https://developers.google.com/workspace/guides/enable-apis>`_ in an available list. An active `Credentials` object or authentication/authorization session must be passed, which can be accessed from the credential store. For a deeper dive into an emulation workflow, please visit our `emulations guide <swat.readthedocs.io/en/latest/emulations.html>`_.
+As shown in the example emulation above, a `service` is necessary to interact with Google Workspace APIs. Each Google Workspace service has their own `dedicated API <https://developers.google.com/workspace/guides/enable-apis>`_ in an available list. An active `Credentials` object or authentication/authorization session must be passed, which can be accessed from the credential store. For a deeper dive into an emulation workflow, please visit our `emulations guide <https://swat.readthedocs.io/en/latest/emulations.html>`_.
 
 Audit Log Data
 --------------
