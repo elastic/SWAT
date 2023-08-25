@@ -34,7 +34,7 @@ For SWAT to operate effectively, it needs to be registered as an application for
 - **Download Credentials**: Secure a JSON file that contains both Client ID and Client Secret.
 
 If this is your maiden attempt, setting up the OAuth consent screen for your applications in the current project might be necessary. Detailed guidelines are available `here <https://support.google.com/cloud/answer/6158849?hl=en>`_.
-For a detailed guide on how to create OAuth creds and use them with SWAT, refer to the `SWAT setup guide <https://swat.readthedocs.io/en/latest/how-to-guides.html>`_.
+For a detailed guide on how to create OAuth creds and use them with SWAT, refer to the `SWAT setup guide <https://swat.readthedocs.io/en/latest/how_to_guides.html>`_.
 
 Enabled APIs and Domain-Wide Delegation
 ---------------------------------------
