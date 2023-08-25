@@ -4,7 +4,7 @@ version = "0.0.1"
 description = "Simple Workspace Attack Tool for emulating against Google Workspace environments."
 authors = ["Terrance DeJesus <contact@dejesus.io>"]
 license = "Apache-2.0"
-readme = "README.md"
+readme = "README.rst"
 homepage = "https://github.com/elastic/SWAT"
 repository = "https://github.com/elastic/SWAT"
 documentation = "https://github.com/elastic/SWAT/wiki"
@@ -14,7 +14,6 @@ classifiers = [
     "Intended Audience :: System Administrators",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Topic :: Security",
     "Topic :: Google Workspace",
