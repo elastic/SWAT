@@ -1,4 +1,5 @@
 import warnings
+from typing import List, Type
 
 import pytest
 
@@ -8,37 +9,42 @@ from swat.emulations.base_emulation import BaseEmulation
 
 
 class TestEmulations:
-    """Tests for emulations."""
+    """Test class for emulations."""
 
-    @pytest.fixture(scope="class", autouse=True)
-    def emulations(self):
+    @staticmethod
+    def get_all_emulation_classes() -> List[Type[BaseEmulation]]:
+        """Fetch all emulation classes."""
+
         return emulate_command().load_all_emulation_classes()
 
-    def test_techniques(self, emulations):
-        errors = [f'Emulation "{emulation.name}" has no techniques defined' for emulation in emulations if not hasattr(emulation, 'techniques')]
-        assert not errors, '\n'.join(errors)
+    emulations_list = get_all_emulation_classes.__func__()
 
-    def test_services(self, emulations):
-        errors = [f'Emulation "{emulation.name}" has no services defined' for emulation in emulations if not hasattr(emulation, 'services')]
-        assert not errors, '\n'.join(errors)
+    @pytest.mark.parametrize("emulation", emulations_list, ids=lambda e: e.name)
+    def test_inheritance(self, emulation: Type[BaseEmulation]):
+        """Test if emulation inherits from BaseEmulation."""
+        assert issubclass(emulation, BaseEmulation), f'Emulation "{emulation.name}" does not inherit from BaseEmulation'
 
-    def test_name(self, emulations):
-        errors = [f'Emulation "{emulation}" has no name defined' for emulation in emulations if not hasattr(emulation, 'name')]
-        assert not errors, '\n'.join(errors)
+    @pytest.mark.parametrize("emulation", emulations_list, ids=lambda e: e.name)
+    def test_parser_defined(self, emulation: Type[BaseEmulation]):
+        """Test if parser is defined in emulation."""
+        assert hasattr(emulation, 'parser'), f'Emulation "{emulation.name}" has no parser defined'
 
-    def test_scopes(self, emulations):
-        errors = [f'Emulation "{emulation.name}" has no scopes defined' for emulation in emulations if not hasattr(emulation, 'scopes')]
-        assert not errors, '\n'.join(errors)
+    @pytest.mark.parametrize("emulation", emulations_list, ids=lambda e: e.name)
+    def test_services_defined(self, emulation: Type[BaseEmulation]):
+        """Test if services are defined in emulation."""
+        assert hasattr(emulation, 'services'), f'Emulation "{emulation.name}" has no services defined'
 
-    def test_parser(self, emulations):
-        errors = [f'Emulation "{emulation.name}" has no parser defined' for emulation in emulations if not hasattr(emulation, 'parser')]
-        assert not errors, '\n'.join(errors)
+    @pytest.mark.parametrize("emulation", emulations_list, ids=lambda e: e.name)
+    def test_scopes_defined(self, emulation: Type[BaseEmulation]):
+        """Test if scopes are defined in emulation."""
+        assert hasattr(emulation, 'scopes'), f'Emulation "{emulation.name}" has no scopes defined'
 
-    def test_execute(self, emulations):
-        errors = [f'Emulation "{emulation.name}" has no execute method defined' for emulation in emulations if not hasattr(emulation, 'execute')]
-        assert not errors, '\n'.join(errors)
+    @pytest.mark.parametrize("emulation", emulations_list, ids=lambda e: e.name)
+    def test_techniques_defined(self, emulation: Type[BaseEmulation]):
+        """Test if techniques are defined in emulation."""
+        assert hasattr(emulation, 'techniques'), f'Emulation "{emulation.name}" has no techniques defined'
 
-    def test_cleanup(self, emulations):
-        warn_msgs = [f'Emulation "{emulation.__module__}" has no cleanup method defined' for emulation in emulations if not hasattr(emulation, 'cleanup')]
-        for msg in warn_msgs:
-            warnings.warn(msg)
+    @pytest.mark.parametrize("emulation", emulations_list, ids=lambda e: e.name)
+    def test_execute_method_defined(self, emulation: Type[BaseEmulation]):
+        """Test if execute method is defined in emulation."""
+        assert hasattr(emulation, 'execute'), f'Emulation "{emulation.name}" has no execute method defined'
