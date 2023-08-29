@@ -42,7 +42,7 @@ class Emulation(BaseEmulation):
     techniques = ['T1098.003']
     name = 'Add Admin Roles to User(s)'
     services = ['admin']
-    scopes = ['admin.directory.user', 'admin.directory.rolemanagement']
+    scopes = ['admin.directory.user', 'admin.directory.rolemanagement', 'admin.directory.user.security']
     description = 'Create a user and assign admin roles to that user.'
     references =['https://developers.google.com/admin-sdk/directory/v1/guides/manage-roles']
 
