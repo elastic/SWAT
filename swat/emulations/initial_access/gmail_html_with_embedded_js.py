@@ -77,6 +77,7 @@ class Emulation(BaseEmulation):
         """
 
         html_content = f'<html><head></head><body>{js_content}</body></html>'
+        self.elogger.info(f'Created HTML with embedded JS')
         return io.BytesIO(bytes(html_content, 'utf-8'))
 
     def create_email(self, attachment: io.BytesIO) -> dict:
