@@ -1,0 +1,10 @@
+# Configuration for the Add Roles to User(s) Emulation
+user:
+  name:
+    givenName: "swat"
+    familyName: "user"
+  password: "secure_password_here"  # Use a secure method to set this
+roles:
+  - "role1"
+  - "role2"
+  # ... [more roles]

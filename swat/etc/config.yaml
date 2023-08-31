@@ -1,6 +1,8 @@
 google:
   scopes:
     - admin.directory.user
+    - admin.directory.rolemanagement
+    - admin.directory.user.security
     - admin.reports.audit.readonly
     - drive.file
     - drive.readonly

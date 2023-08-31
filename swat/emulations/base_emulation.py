@@ -84,6 +84,10 @@ class BaseEmulation:
         self.econfig = self.load_emulation_config()
         self.attack_data = self.get_attack()
         self.artifacts_path = self.setup_artifacts_folder()
+        self.domain = self.obj.config['google'].get('domain')
+        if not self.domain:
+            self.logger.error('Domain not configured in SWAT config, some emulations may not work correctly.')
+            return
 
         assert self.parser, '"parser" must be implemented in each emulation command class'
         self.args = validate_args(self.parser, args)
