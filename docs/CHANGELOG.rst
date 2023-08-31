@@ -9,6 +9,8 @@ Current (Unreleased)
 --------------------
 
 - Initial start of the changelog documentation. [`@terrancedejesus <https://github.com/terrancedejesus>`_]
+- Added `pytest` to the project. [`@terrancedejesus <https://github.com/terrancedejesus>`_]
+- Added `test_emulation.py` test file with several test cases for emulation metadata. [`@terrancedejesus <https://github.com/terrancedejesus>`_]
 
 [0.0.1] - 2023-08-12
 --------------------------
