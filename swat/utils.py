@@ -21,11 +21,13 @@ import argparse
 import json
 import os
 import platform
+import secrets
+import string
 import sys
 import zipfile
 from pathlib import Path
-from typing import List, Optional, Union
 from textwrap import wrap
+from typing import List, Optional, Union
 
 import requests
 import yaml
@@ -158,3 +160,9 @@ def format_scopes(scopes: Union[str, List[str]]) -> List[str]:
     else:
         return [f'https://www.googleapis.com/auth/{scope}' for
                 scope in scopes if 'https://www.googleapis.com/auth/' not in scope]
+
+def generate_password(length: int = 12) -> str:
+    """Generate a random password."""
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(secrets.choice(characters) for _ in range(length))
+    return password
