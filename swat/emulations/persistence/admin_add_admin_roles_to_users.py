@@ -17,13 +17,12 @@
 # under the License.
 #
 
-import secrets
-import string
 from typing import Dict, List, Optional
 
 from googleapiclient.discovery import build
 
 from swat.emulations.base_emulation import BaseEmulation
+from swat.utils import generate_password
 
 
 class Emulation(BaseEmulation):
@@ -61,19 +60,13 @@ class Emulation(BaseEmulation):
         if self.args.roles:
             self.econfig['roles'] = [role.strip() for role in kwargs['roles'].split(',')]
 
-    def generate_password(self, length: int = 12) -> str:
-        """Generate a random password."""
-        characters = string.ascii_letters + string.digits + string.punctuation
-        password = ''.join(secrets.choice(characters) for _ in range(length))
-        self.elogger.info(f"Generated password: {password}")
-        return password
-
     def create_user(self) -> Optional[Dict[str, str]]:
         """Create a user in Google Workspace or fetch existing user details using configuration settings."""
 
         user_info = self.econfig['user']
         user_info['primaryEmail'] = f'{user_info["name"]["givenName"]}-{user_info["name"]["familyName"]}@{self.domain}'
-        user_info['password'] = self.generate_password()
+        user_info['password'] = generate_password()
+        self.elogger.info(f"User password: {user_info['password']}")
 
         try:
             user = self.service.users().insert(body=user_info).execute()
