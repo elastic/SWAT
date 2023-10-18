@@ -1,0 +1,6 @@
+# t1136.yaml
+username: example
+address: user@example.com
+email: user@example.com
+password: password
+cleanup: false
