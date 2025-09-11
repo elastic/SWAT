@@ -1,0 +1,18 @@
+# Declare a Backstage Component that represents your application.
+---
+# yaml-language-server: $schema=https://json.schemastore.org/catalog-info.json
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: SWAT
+  description: Simple Workspace Attack Tool (SWAT) is a tool for simulating malicious behavior against Google Workspace in reference to the MITRE ATT&CK framework.
+  annotations:
+    backstage.io/source-location: "url:https://github.com/elastic/SWAT/"
+    github.com/project-slug: "elastic/SWAT"
+    github.com/team-slug: "elastic/threat-research-and-detection-engineering"
+    buildkite.com/project-slug: "elastic/SWAT"
+
+spec:
+  type: service
+  owner: group:threat-research-and-detection-engineering
+  lifecycle: production
