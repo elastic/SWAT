@@ -2,6 +2,12 @@
 .vscode/
 .idea/
 
+# Local AI, planning, and development markdown.
+# Published project docs are RST. Keep only the markdown that ships with the repo.
+*.md
+!tango/README.md
+!.github/ISSUE_TEMPLATE/*.md
+
 # Mac/OSX
 .DS_Store
 
