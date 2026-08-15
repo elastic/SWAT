@@ -16,7 +16,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.10",
     "Topic :: Security",
-    "Topic :: Google Workspace",
 ]
 
 [tool.poetry.dependencies]
