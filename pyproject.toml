@@ -21,22 +21,20 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-colorama = "^0.4.6"
-google-auth = "^2.19.1"
-google-auth-oauthlib = "^1.0.0"
-google-auth-httplib2 = "^0.1.0"
-google-api-python-client = "^2.88.0"
-PyYAML = "^6.0"
-requests = "^2.30.0"
-semver = "3.0.1"
-tabulate = "0.9.0"
-pandas = { version = "2.0.2", optional = true }
-selenium = "^4.11.2"
-sphinx = "^7.2.2"
-sphinx-rtd-theme = "^1.3.0"
-pytest = "^7.4.0"
-
-[tool.poetry.dev-dependencies]
+colorama = "0.4.6"
+google-auth = "2.56.3"
+google-auth-oauthlib = "1.4.0"
+google-auth-httplib2 = "0.4.1"
+google-api-python-client = "2.198.0"
+PyYAML = "6.0.3"
+requests = "2.34.2"
+semver = "3.0.4"
+tabulate = "0.10.0"
+pandas = { version = "2.3.3", optional = true }
+selenium = "4.47.0"
+sphinx = "8.1.3"
+sphinx-rtd-theme = "3.1.0"
+pytest = "8.4.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
