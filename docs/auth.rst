@@ -10,7 +10,7 @@ Google Workspace Authentication Mechanisms
 
 - **Service Accounts**: Representing non-human users, these accounts authenticate via dedicated credentials. Service accounts are ideal for server-to-server interactions or acting on behalf of a user. Service accounts require domain-wide delegation to access Google Workspace APIs. Unlike OAuth, service account scopes are defined at the time of creation or based on the IAM role assigned. Therefore to use service accounts in SWAT, the user must create a service account with the appropriate scopes and download the JSON key file.
 
-- **API Keys**: These keys authenticate requests to Google Workspace APIs.
+- **API Keys**: Google API keys are not used for SWAT authentication. SWAT authenticates with OAuth client credentials or service accounts.
 
 For SWAT, both OAuth credentials and Service Account credentials are supported.
 
@@ -51,11 +51,16 @@ The `Cred` class pairs these credentials with an active session if one exists. T
 Command Execution with `auth.py`
 --------------------------------
 
-`auth.py` provides the executable logic, allowing the user to:
+``auth.py`` provides the executable logic. Existing commands stay in place:
 
-- Initiate authentication using either OAuth or Service Account.
-- Fetch, store, or remove credentials in the `CredStore`.
-- Authenticates and authorizes to Google Workspace services with a `Cred` object.
+- ``auth session`` authenticates with OAuth or a service account and optionally stores the session under a key.
+- ``auth list`` lists stored sessions.
+- ``auth status`` shows stored keys, credential type, session state, and a non-secret identity. Use ``--key`` to inspect one entry.
+- ``auth logout [KEY]`` clears the stored session for a key and leaves the credential in the store. The default key is ``default``. Logout is local only; it does not revoke tokens at Google.
+
+``auth session --service-account --subject USER@DOMAIN`` impersonates that Workspace user through domain-wide delegation. ``--subject`` requires ``--service-account``.
+
+Credentials are added and removed with ``creds add/remove/list``. Those commands are unchanged.
 
 Google Workspace Scopes
 -----------------------
@@ -84,7 +89,7 @@ For more information on how to authenticate or authorize with credentials in SWA
 Persistence of Credentials
 --------------------------
 
-Credentials are stored in a serialized file, `swat/etc/.cred_store.pkl`, by default. Both credentials and valid sessions are stored in this file and are loaded at runtime. This allows for persistent authentication and authorization without the need to re-authenticate each time for every user or service account. This can be disabled by changed the `store_on_exit` value in the `etc/config.yaml` to `False`.
+Credentials are stored in a serialized file, `swat/etc/.cred_store.pkl`, by default. Both credentials and valid sessions are stored in this file and are loaded at runtime. This allows for persistent authentication and authorization without the need to re-authenticate each time for every user or service account. This can be disabled by changing the `save_on_exit` value in the `etc/config.yaml` to `False`.
 
 Recommendations
 ---------------
@@ -94,7 +99,7 @@ Recommendations
 - Some emulations require a "3rd-party" google workspace account, separate from the organization being targeted/tested. It is therefore recommended to setup a separate and external Google Workspace account for this purpose.
 - For the "3rd-party" Google Workspace account, it is recommended to use OAuth credentials as well and store them in the credential store with the key name `external` as such ``auth session --store-key external --creds PATH_TO_CREDS``.
 - It is recommended to have all Google Chrome profiles established and pre-authenticated for users where OAuth credentials are used. This will be useful when the OAuth consent screen appears and the user can select the appropriate profile to authenticate with.
-- It is recommended to keep the `store_on_exit` value in the `etc/config.yaml` to `True` to ensure credentials are stored and available for future use.
+- It is recommended to keep the `save_on_exit` value in the `etc/config.yaml` to `True` to ensure credentials are stored and available for future use.
 - Most OOTB emulations require 1-2 users with OAuth creds to emulate either internal or external user activity.
 
 
