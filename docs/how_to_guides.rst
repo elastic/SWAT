@@ -34,11 +34,13 @@ By default, SWAT will save the ``CredentialStore`` to a local file named ``.cred
 Authentication and Authorization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- Add Creds, Authenticate and Store Session: Use ``auth session --creds PATH_TO_CREDENTIALS_FILE --store NAME`` (`--service-account` if service account).
-- Remove Creds & Sessions from Store: Use ``creds remove NAME``.
-- List Credentials: Use ``creds list`` to view the credential store.
-- List Auth Sessions: Use ``auth list`` to view valid sessions.
-- Add Additional Creds and Session to Store:** Repeat the first note above with separate credentials.
+- Add creds, authenticate, and store a session: Use ``auth session --creds PATH_TO_CREDENTIALS_FILE --store-key NAME`` (``--service-account`` if service account). For domain-wide delegation, add ``--subject USER@DOMAIN``.
+- Check stored keys and session state: Use ``auth status``.
+- Clear a session without removing creds: Use ``auth logout NAME``.
+- Remove creds and sessions from the store: Use ``creds remove NAME``.
+- List credentials: Use ``creds list`` to view the credential store.
+- List auth sessions: Use ``auth list`` to view valid sessions.
+- Add additional creds and sessions to the store: Repeat the first note above with separate credentials.
 
 Specific Authentication Steps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -54,8 +56,8 @@ For most of the SWAT commands and emulations, a single OAuth validated session w
 
 1. Run ``auth list`` - There should be no active sessions available, unless your credential store has been loaded from previous session
 2. Run ``creds list`` - There should be no saved credentials, unless your credential store has been loaded from a previous session
-3. Run ``auth session --store default --creds PATH_TO_CREDS`` - where `default` is the key in the credential store for these creds and session
-    #. This can also be used to store credentials, authenticate/authorize and store the session in the Credential Store at once. So if you want to bypass steps 1 and 2, you can run ``auth session --store default --creds PATH_TO_CREDS``.
+3. Run ``auth session --store-key default --creds PATH_TO_CREDS`` - where `default` is the key in the credential store for these creds and session
+    #. This can also be used to store credentials, authenticate/authorize and store the session in the Credential Store at once. So if you want to bypass steps 1 and 2, you can run ``auth session --store-key default --creds PATH_TO_CREDS``.
 4. Follow the Google Workspace OAuth prompt and consent screen with a valid account.
 
    .. image:: _static/auth_session_store.png
@@ -85,7 +87,7 @@ Once complete, you may continue to the following workflows, however be aware tha
     #. From the `Google Cloud Console <https://console.cloud.google.com/>`_, navigate to the service account you want to use and click **Add Key**.
     #. Select **JSON** and click **Create**. This will download the service account credentials to your local machine.
     #. You can also create a new service account in the console and assign access to users whom this service account will make API calls on behalf of.
-2. Authenticate and Authorized: Run ``auth session --store-key KEYNAME --creds PATH_TO_CREDS --service-account``
+2. Authenticate and authorize: Run ``auth session --store-key KEYNAME --creds PATH_TO_CREDS --service-account --subject USER@DOMAIN``
 3. Run ``auth list`` to check that session is saved
 4. Run ``creds list`` to ensure creds are saved
 5. Within your emulation, pass your session from the credential store to build your service in the initialization method ``self.service = build('drive', 'v3', credentials=self.obj.cred_store.store['KEYNAME'].session)``
@@ -108,7 +110,7 @@ Your `self.service` will now be active and authenticated and can be used anywher
       :width: 600px
       :alt: Add Service Account Credentials to Credential Store
 
-4. Run ``auth session --key KEYNAME --store-key KEYNAME --service-account``
+4. Run ``auth session --key KEYNAME --store-key KEYNAME --service-account --subject USER@DOMAIN``
 6. Build your service in the initialization method of the emulation: ``self.service = build('drive', 'v3', credentials=self.obj.cred_store.store['KEYNAME'].session``
 
    .. image:: _static/auth_session_from_cred_store.png

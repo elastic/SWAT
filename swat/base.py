@@ -152,6 +152,13 @@ class CredStore:
         """Remove cred by key and type."""
         return self.store.pop(key, None) is not None
 
+    def clear_session(self, key: str) -> bool:
+        """Clear a stored session while leaving the credential in place."""
+        if key not in self.store or self.store[key].session is None:
+            return False
+        self.store[key].session = None
+        return True
+
     def get(self, key: str, validate_type: Optional[Literal['oauth', 'service']] = None,
             missing_error: bool = True) -> Optional[Cred]:
         if key not in self.store:

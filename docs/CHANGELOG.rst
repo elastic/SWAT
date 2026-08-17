@@ -8,6 +8,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 Current (Unreleased)
 --------------------
 
+- Add mocked compatibility tests, ``auth status`` / ``auth logout``, and optional domain-wide delegation ``--subject`` without changing existing commands or store keys.
 - Record packaging updates and install from the lockfile in CI. (`#93 <https://github.com/elastic/SWAT/pull/93>`_) [`@terrancedejesus <https://github.com/terrancedejesus>`_]
 - Ignore local AI and planning markdown files. (`#90 <https://github.com/elastic/SWAT/pull/90>`_) [`@terrancedejesus <https://github.com/terrancedejesus>`_]
 - Pin Python dependencies to current 3.10-compatible versions and add ``poetry.lock``. (`#91 <https://github.com/elastic/SWAT/pull/91>`_) [`@terrancedejesus <https://github.com/terrancedejesus>`_]

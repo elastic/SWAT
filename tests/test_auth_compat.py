@@ -1,6 +1,7 @@
 import json
+import logging
 from types import SimpleNamespace
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -122,6 +123,16 @@ class TestCredStoreKeys:
         assert listed
         assert listed[0].startswith('default')
 
+    def test_clear_session_keeps_credential(self, store, oauth_creds):
+        session = SimpleNamespace(expired=False, refresh_token=None, client_id='session-client')
+        store.add('default', creds=oauth_creds, session=session)
+
+        assert store.clear_session('default') is True
+        assert store.store['default'].session is None
+        assert store.get('default', validate_type='oauth').client_id == oauth_creds.client_id
+        assert store.clear_session('default') is False
+        assert store.clear_session('missing') is False
+
 
 class TestCredStorePersistence:
     def test_save_and_load_round_trip(self, tmp_path, oauth_creds):
@@ -167,9 +178,18 @@ class TestCommandParsers:
         session = AuthCommand(command='auth', args=['session', '--store-key', 'default'], obj=obj)
         assert session.args.subcommand == 'session'
         assert session.args.store_key == 'default'
+        assert session.args.subject is None
 
         listed = AuthCommand(command='auth', args=['list'], obj=obj)
         assert listed.args.subcommand == 'list'
+
+        status = AuthCommand(command='auth', args=['status', '--key', 'default'], obj=obj)
+        assert status.args.subcommand == 'status'
+        assert status.args.key == 'default'
+
+        logout = AuthCommand(command='auth', args=['logout'], obj=obj)
+        assert logout.args.subcommand == 'logout'
+        assert logout.args.key == 'default'
 
     def test_creds_add_remove_list_parsers(self, tmp_path):
         obj = SWAT(config={'google': {'scopes': []}}, cred_store=CredStore())
@@ -203,9 +223,81 @@ class TestCommandParsers:
         )
 
 
+class TestAuthStatusAndLogout:
+    def test_status_omits_secrets(self, caplog, oauth_creds):
+        store = CredStore()
+        store.add('default', creds=oauth_creds, session=SimpleNamespace(expired=False, client_id='session-client'))
+        obj = SWAT(config={'google': {'scopes': []}}, cred_store=store)
+
+        with caplog.at_level(logging.INFO):
+            AuthCommand(command='auth', args=['status'], obj=obj).execute()
+
+        assert 'TEST-NOT-A-SECRET' not in caplog.text
+        assert 'default: type=oauth session=active identity=oauth-client-id.apps.googleusercontent.com' in caplog.text
+
+    def test_logout_clears_session_and_keeps_creds(self, oauth_creds):
+        store = CredStore()
+        store.add(
+            'default',
+            creds=oauth_creds,
+            session=SimpleNamespace(expired=False, refresh_token=None, client_id='session-client'),
+        )
+        obj = SWAT(config={'google': {'scopes': []}}, cred_store=store)
+
+        AuthCommand(command='auth', args=['logout', 'default'], obj=obj).execute()
+
+        assert obj.cred_store.store['default'].session is None
+        assert obj.cred_store.get('default', validate_type='oauth').client_id == oauth_creds.client_id
+
+
+class TestDomainWideDelegation:
+    def test_subject_requires_service_account(self, caplog, oauth_creds):
+        store = CredStore()
+        store.add('default', creds=oauth_creds)
+        obj = SWAT(config={'google': {'scopes': []}}, cred_store=store)
+
+        with caplog.at_level(logging.INFO):
+            session = AuthCommand(
+                command='auth',
+                args=['session', '--key', 'default', '--subject', 'user@example.com'],
+                obj=obj,
+            ).authenticate()
+
+        assert session is None
+        assert 'requires --service-account' in caplog.text
+
+    def test_service_account_session_applies_subject(self, service_creds):
+        store = CredStore()
+        store.add('default', creds=service_creds)
+        obj = SWAT(config={'google': {'scopes': []}}, cred_store=store)
+        delegated = MagicMock(name='delegated')
+        session = MagicMock(name='session')
+        session.with_subject.return_value = delegated
+
+        with patch('swat.commands.auth.Credentials.from_service_account_info', return_value=session):
+            result = AuthCommand(
+                command='auth',
+                args=[
+                    'session',
+                    '--key', 'default',
+                    '--service-account',
+                    '--subject', 'user@example.com',
+                    '--store-key', 'default',
+                ],
+                obj=obj,
+            ).authenticate()
+
+        session.with_subject.assert_called_once_with('user@example.com')
+        assert result is delegated
+        assert obj.cred_store.store['default'].session is delegated
+
+
 class TestShellDiscovery:
     def test_shell_registers_auth_creds_and_scopes(self):
         commands = SWATShell.get_commands()
         assert 'auth' in commands
         assert 'creds' in commands
         assert 'scopes' in commands
+        assert 'emulate' in commands
+        assert 'audit' in commands
+        assert 'coverage' in commands
